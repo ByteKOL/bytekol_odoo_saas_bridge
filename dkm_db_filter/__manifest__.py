@@ -5,6 +5,6 @@
     "category": "Tools",
     "depends": ["web"],
     "auto_install": False,
-    "installable": True,
+    "installable": False,  # server wide module
     "license": "OPL-1",
 }
