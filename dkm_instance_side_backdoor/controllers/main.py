@@ -1,9 +1,11 @@
 import logging
 import werkzeug
+import threading
 
 import odoo
 from odoo.exceptions import AccessDenied
 from odoo.http import route, request, Controller
+from odoo.modules.registry import Registry
 from odoo.service import security
 from odoo.addons.web.controllers.main import _get_login_redirect_url
 
@@ -37,3 +39,23 @@ class Main(Controller):
             return request.redirect('/web')
         except AccessDenied:
             return request.redirect('/web/login')
+
+    @route('/reload_registry', type='json', auth='none', methods=['POST'])
+    def reload_registry(self):
+        json_data = request.jsonrequest
+        admin_passwd = json_data.get('admin_passwd')
+        db_name = json_data.get('db_name')
+        wait = json_data.get('wait')
+
+        passwd_valid = odoo.tools.config.verify_admin_password(admin_passwd)
+        if not passwd_valid:
+            return {'error': 'admin_password invalid'}
+
+        def _reload_registry():
+            Registry.new(db_name, update_module=True)
+
+        if not wait:
+            threading.Thread(target=_reload_registry).start()
+        else:
+            _reload_registry()
+        return {'success': True}
