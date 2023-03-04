@@ -1,2 +1,1 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_dkm_token_sys,dkm.token.sys,model_dkm_token,base.group_system,1,0,0,0

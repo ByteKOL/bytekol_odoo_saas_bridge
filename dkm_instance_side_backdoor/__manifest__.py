@@ -3,10 +3,9 @@
     'description': "Odoo instance health monitoring",
     'version': '1.0.0',
     'category': "Tools",
-    'depends': ['base'],
+    'depends': ['dkm_api'],
     'data': [
         'security/ir.model.access.csv',
-        'data/cron.xml'
     ],
     'installable': True,
     'auto_install': True,

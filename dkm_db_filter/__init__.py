@@ -1,5 +1,11 @@
 import re
+
+import odoo
+import logging
 from odoo import http
+
+_logger = logging.getLogger(__name__)
+
 
 db_filter_origin = http.db_filter
 
@@ -14,3 +20,6 @@ def db_filter(dbs, httprequest=None):
 
 
 http.db_filter = db_filter
+
+if 'dkm_db_filter' not in odoo.tools.config.get('server_wide_modules', '').split(','):
+    _logger.error('module dkm_db_filter must be loaded in server_wide_modules')

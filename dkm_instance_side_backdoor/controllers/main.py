@@ -1,5 +1,4 @@
 import logging
-import werkzeug
 import threading
 
 import odoo
@@ -8,25 +7,16 @@ from odoo.http import route, request, Controller
 from odoo.modules.registry import Registry
 from odoo.service import security
 from odoo.addons.web.controllers.main import _get_login_redirect_url
+from odoo.addons.dkm_api.api import dkm_api, verify_admin_password
 
 _logger = logging.getLogger(__name__)
 
 
 class Main(Controller):
 
+    @dkm_api('odoo_saas_api', custom_response=True, one_time_token=True, token_on='url_params')
     @route('/super_user_login', auth='public', methods=['GET'])
-    def supper_user_login(self, *args, **kwargs):
-        token = kwargs.get('token')
-        if not token:
-            _logger.error('/super_user_login, not token.')
-            return werkzeug.exceptions.Forbidden()
-        _logger.error(token)
-        valid_token = request.env['dkm.token'].sudo().is_token_valid(token, 'odoo_saas_api')
-        if not valid_token:
-            _logger.error('/super_user_login, token invalid.')
-            return werkzeug.exceptions.Forbidden()
-        valid_token.sudo().unlink()
-
+    def supper_user_login(self):
         uid = request.session.uid = odoo.SUPERUSER_ID
         request.env['res.users'].clear_caches()
         request.session.session_token = security.compute_session_token(request.session, request.env)
@@ -40,16 +30,12 @@ class Main(Controller):
         except AccessDenied:
             return request.redirect('/web/login')
 
+    @verify_admin_password
     @route('/reload_registry', type='json', auth='none', methods=['POST'])
     def reload_registry(self):
         json_data = request.jsonrequest
-        admin_passwd = json_data.get('admin_passwd')
         db_name = json_data.get('db_name')
         wait = json_data.get('wait')
-
-        passwd_valid = odoo.tools.config.verify_admin_password(admin_passwd)
-        if not passwd_valid:
-            return {'error': 'admin_password invalid'}
 
         def _reload_registry():
             Registry.new(db_name, update_module=True)
@@ -59,3 +45,8 @@ class Main(Controller):
         else:
             _reload_registry()
         return {'success': True}
+
+    @verify_admin_password
+    @route('/download_backup', type='http', auth='none', methods=['POST'])
+    def download_backup(self):
+        pass
