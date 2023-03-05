@@ -1,9 +1,13 @@
+import datetime
 import logging
 import threading
 
+import werkzeug
+
 import odoo
+from odoo.addons.dkm_instance_side_backdoor.db import dump_db
 from odoo.exceptions import AccessDenied
-from odoo.http import route, request, Controller
+from odoo.http import route, request, Controller, content_disposition
 from odoo.modules.registry import Registry
 from odoo.service import security
 from odoo.addons.web.controllers.main import _get_login_redirect_url
@@ -46,7 +50,20 @@ class Main(Controller):
             _reload_registry()
         return {'success': True}
 
-    @verify_admin_password
-    @route('/download_backup', type='http', auth='none', methods=['POST'])
-    def download_backup(self):
-        pass
+    @dkm_api('odoo_saas_api', custom_response=True, one_time_token=True, token_on='url_params')
+    @route('/download_backup', type='http', auth='public', methods=['GET'])
+    def download_backup(self, db_name, backup_format='zip'):
+        """
+        :param db_name:
+        :param backup_format: 'zip' or 'db'
+        :return:
+        """
+        ts = datetime.datetime.utcnow().strftime("%Y-%m-%d_%H-%M-%S")
+        filename = "%s_%s.%s" % (db_name, ts, backup_format)
+        headers = [
+            ('Content-Type', 'application/octet-stream; charset=binary'),
+            ('Content-Disposition', content_disposition(filename)),
+        ]
+        dump_stream = dump_db(db_name, None, backup_format)
+        response = werkzeug.wrappers.Response(dump_stream, headers=headers, direct_passthrough=True)
+        return response
