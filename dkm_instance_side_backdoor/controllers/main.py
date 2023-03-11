@@ -1,5 +1,7 @@
 import datetime
 import logging
+import os
+import tempfile
 import threading
 
 import werkzeug
@@ -58,12 +60,25 @@ class Main(Controller):
         :param backup_format: 'zip' or 'db'
         :return:
         """
+
         ts = datetime.datetime.utcnow().strftime("%Y-%m-%d_%H-%M-%S")
         filename = "%s_%s.%s" % (db_name, ts, backup_format)
         headers = [
             ('Content-Type', 'application/octet-stream; charset=binary'),
             ('Content-Disposition', content_disposition(filename)),
         ]
-        dump_stream = dump_db(db_name, None, backup_format)
+        if backup_format in ['zip', 'db']:
+            dump_stream = dump_db(db_name, None, backup_format)
+        elif backup_format == 'filestore':
+            filestore = odoo.tools.config.filestore(db_name)
+            if not os.path.exists(filestore):
+                return "Filestore %s not exist" % filestore
+
+            tmp_file = tempfile.TemporaryFile()
+            odoo.tools.osutil.zip_dir(filestore, tmp_file)
+            dump_stream = tmp_file
+        else:
+            return f"Invalid backup_format {backup_format}"
+
         response = werkzeug.wrappers.Response(dump_stream, headers=headers, direct_passthrough=True)
         return response
