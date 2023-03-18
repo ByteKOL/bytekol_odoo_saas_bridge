@@ -1,8 +1,10 @@
 import datetime
+import json
 import logging
 import os
 import tempfile
 import threading
+import traceback
 
 import werkzeug
 
@@ -13,7 +15,8 @@ from odoo.http import route, request, Controller, content_disposition
 from odoo.modules.registry import Registry
 from odoo.service import security
 from odoo.addons.web.controllers.main import _get_login_redirect_url
-from odoo.addons.dkm_api.api import dkm_api, verify_admin_password
+from odoo.addons.dkm_api.api import dkm_api, verify_admin_password, verify_request_from_server
+from odoo.tools import str2bool
 
 _logger = logging.getLogger(__name__)
 
@@ -57,12 +60,16 @@ class Main(Controller):
     def download_backup(self, db_name, backup_format='zip'):
         """
         :param db_name:
-        :param backup_format: 'zip' or 'db'
+        :param backup_format: 'zip', 'db', 'filestore'
         :return:
         """
 
         ts = datetime.datetime.utcnow().strftime("%Y-%m-%d_%H-%M-%S")
-        filename = "%s_%s.%s" % (db_name, ts, backup_format)
+        file_format = '.zip'
+        if backup_format == 'db':
+            file_format = '.sql'
+
+        filename = "%s_%s.%s" % (db_name, ts, file_format)
         headers = [
             ('Content-Type', 'application/octet-stream; charset=binary'),
             ('Content-Disposition', content_disposition(filename)),
@@ -75,7 +82,8 @@ class Main(Controller):
                 return "Filestore %s not exist" % filestore
 
             tmp_file = tempfile.TemporaryFile()
-            odoo.tools.osutil.zip_dir(filestore, tmp_file)
+            odoo.tools.osutil.zip_dir(filestore, tmp_file, include_dir=False)
+            tmp_file.seek(0)
             dump_stream = tmp_file
         else:
             return f"Invalid backup_format {backup_format}"
