@@ -90,3 +90,8 @@ class Main(Controller):
 
         response = werkzeug.wrappers.Response(dump_stream, headers=headers, direct_passthrough=True)
         return response
+
+    @dkm_api('odoo_saas_api', one_time_token=True)
+    @route('/update_app_list', type='http', auth='public', methods=['POST'], csrf=False)
+    def update_app_list(self):
+        request.env['ir.module.module'].sudo().update_list()
