@@ -9,7 +9,7 @@ import traceback
 import werkzeug
 
 import odoo
-from odoo.addons.dkm_instance_side_backdoor.db import dump_db
+from odoo.addons.dkm_odoo_entity_side_backdoor.db import dump_db
 from odoo.exceptions import AccessDenied
 from odoo.http import route, request, Controller, content_disposition
 from odoo.modules.registry import Registry
