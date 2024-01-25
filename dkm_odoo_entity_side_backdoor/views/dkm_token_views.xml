@@ -1,0 +1,81 @@
+<odoo>
+    <record id="dkm_token_tree_view" model="ir.ui.view">
+        <field name="name">dkm.token.tree.view</field>
+        <field name="model">dkm.token</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="token"/>
+                <field name="user_id"/>
+                <field name="create_date"/>
+                <field name="live_time"/>
+                <field name="date_expire"/>
+                <field name="is_expire"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="dkm_token_form_view" model="ir.ui.view">
+        <field name="name">dkm.token.form.view</field>
+        <field name="model">dkm.token</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <field name="active" invisible="1" />
+                    <widget name="web_ribbon" title="Archived" bg_color="bg-danger" attrs="{'invisible': [('active', '=', True)]}"/>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="token"/>
+                            <field name="user_id"/>
+                        </group>
+                        <group>
+                            <field name="create_date"/>
+                            <field name="live_time"/>
+                            <field name="date_expire"/>
+                            <field name="is_expire"/>
+                            <field name="is_permanent"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Description" name="description">
+                            <field name="description"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="dkm_token_search_view" model="ir.ui.view">
+        <field name="name">dkm.token.search.view</field>
+        <field name="model">dkm.token</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="token"/>
+                <field name="create_date"/>
+                <field name="user_id"/>
+                <field name="live_time"/>
+                <field name="date_expire"/>
+                <field name="is_expire"/>
+                <field name="description"/>
+
+                <filter name="filter_is_expire" string="Expire" domain="[('is_expire', '=', True)]"/>
+                <filter name="filter_alive" string="Alive" domain="[('is_expire', '=', False)]"/>
+                <separator/>
+
+                <group string="Group By">
+                    <filter string="User" name="grb_user" context="{'group_by': 'user_id'}"/>
+                    <filter string="Is Expire" name="grb_is_expire" context="{'group_by': 'is_expire'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="dkm_token_action_window" model="ir.actions.act_window">
+        <field name="name">Dotd Token</field>
+        <field name="res_model">dkm.token</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>

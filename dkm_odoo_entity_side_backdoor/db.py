@@ -18,8 +18,7 @@ def dump_db(db_name, stream, backup_format='zip'):
 
     _logger.info('DUMP DB: %s format %s', db_name, backup_format)
 
-    cmd = ['pg_dump', '--no-owner']
-    cmd.append(db_name)
+    cmd = ['pg_dump', '--no-owner', db_name]
 
     if backup_format == 'zip':
         with tempfile.TemporaryDirectory() as dump_dir:
@@ -46,6 +45,7 @@ def dump_db(db_name, stream, backup_format='zip'):
             shutil.copyfileobj(stdout, stream)
         else:
             return stdout
+
 
 def dump_db_manifest(cr):
     pg_version = "%d.%d" % divmod(cr._obj.connection.server_version / 100, 100)

@@ -3,9 +3,12 @@
     'description': "Odoo entity health monitoring",
     'version': '1.0.0',
     'category': "Tools",
-    'depends': ['dkm_api'],
+    'depends': ['base'],
     'data': [
         'security/ir.model.access.csv',
+        'security/security.xml',
+        'views/dkm_token_views.xml',
+        'views/dkm_traceback_log_views.xml'
     ],
     'assets': {
         'web.assets_backend': [

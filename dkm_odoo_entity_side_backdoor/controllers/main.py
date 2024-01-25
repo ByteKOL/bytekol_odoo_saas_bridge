@@ -9,21 +9,20 @@ import traceback
 import werkzeug
 
 import odoo
+from odoo.addons.dkm_odoo_entity_side_backdoor import api
 from odoo.addons.dkm_odoo_entity_side_backdoor.db import dump_db
 from odoo.exceptions import AccessDenied
 from odoo.http import route, request, Controller, content_disposition
 from odoo.modules.registry import Registry
 from odoo.service import security
 from odoo.addons.web.controllers.main import _get_login_redirect_url
-from odoo.addons.dkm_api.api import dkm_api, verify_admin_password, verify_request_from_server
-from odoo.tools import str2bool
 
 _logger = logging.getLogger(__name__)
 
 
 class Main(Controller):
 
-    @dkm_api('odoo_saas_api', custom_response=True, one_time_token=True, token_on='url_params')
+    @api.dkm_api('odoo_saas_api', custom_response=True, one_time_token=True, token_on='url_params')
     @route('/super_user_login', auth='public', methods=['GET'])
     def supper_user_login(self):
         uid = request.session.uid = odoo.SUPERUSER_ID
@@ -39,7 +38,7 @@ class Main(Controller):
         except AccessDenied:
             return request.redirect('/web/login')
 
-    @verify_admin_password
+    @api.verify_admin_password
     @route('/reload_registry', type='json', auth='none', methods=['POST'])
     def reload_registry(self):
         json_data = request.jsonrequest
@@ -55,7 +54,7 @@ class Main(Controller):
             _reload_registry()
         return {'success': True}
 
-    @dkm_api('odoo_saas_api', custom_response=True, one_time_token=True, token_on='url_params')
+    @api.dkm_api('odoo_saas_api', custom_response=True, one_time_token=True, token_on='url_params')
     @route('/download_backup', type='http', auth='public', methods=['GET'])
     def download_backup(self, db_name, backup_format='zip'):
         """
@@ -91,7 +90,7 @@ class Main(Controller):
         response = werkzeug.wrappers.Response(dump_stream, headers=headers, direct_passthrough=True)
         return response
 
-    @dkm_api('odoo_saas_api', one_time_token=True)
+    @api.dkm_api('odoo_saas_api', one_time_token=True)
     @route('/update_app_list', type='http', auth='public', methods=['POST'], csrf=False)
     def update_app_list(self):
         request.env['ir.module.module'].sudo().update_list()
