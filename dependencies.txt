@@ -1,1 +1,0 @@
-git@github.com:DKM-ORG/dkm_addons.git#15.0
