@@ -41,7 +41,7 @@ class Main(Controller):
     @api.verify_admin_password
     @route('/reload_registry', type='json', auth='none', methods=['POST'])
     def reload_registry(self):
-        json_data = request.jsonrequest
+        json_data = request.dispatcher.jsonrequest
         db_name = json_data.get('db_name')
         wait = json_data.get('wait')
 

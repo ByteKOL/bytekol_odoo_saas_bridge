@@ -2,8 +2,7 @@
 
 import {Dialog} from "@web/core/dialog/dialog";
 import {registry} from "@web/core/registry";
-
-const {xml} = owl.tags;
+const {xml} = owl;
 
 export class OdooSaaSErrorDialog extends Dialog {
     setup() {

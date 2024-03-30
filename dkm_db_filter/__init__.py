@@ -10,13 +10,11 @@ _logger = logging.getLogger(__name__)
 db_filter_origin = http.db_filter
 
 
-def db_filter(dbs, httprequest=None):
-    dbs = db_filter_origin(dbs, httprequest)
-    httprequest = httprequest or http.request.httprequest
+def db_filter(dbs, host=None):
+    dbs_orig = db_filter_origin(dbs, host)
+    httprequest = http.request.httprequest
     db_filter_hdr = httprequest.environ.get("HTTP_X_ODOO_DBFILTER")
-    if db_filter_hdr:
-        dbs = [db for db in dbs if re.match(db_filter_hdr, db)]
-    return dbs
+    return [db for db in dbs if re.match(db_filter_hdr, db)] if db_filter_hdr else dbs_orig
 
 
 http.db_filter = db_filter
