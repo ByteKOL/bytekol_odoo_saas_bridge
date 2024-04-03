@@ -53,7 +53,7 @@ def dkm_api(purpose='api_general', log_traceback=True, custom_response=False, to
                     token = kwargs.get('token')
 
                 dkm_token = request.env['dkm.token'].sudo().ensure_token_valid(token, purpose)
-                request.uid = dkm_token.user_id.id
+                request.update_env(user=dkm_token.user_id.id)
                 if api_kwargs.get('one_time_token'):
                     dkm_token.sudo().unlink()
 
