@@ -1,7 +1,7 @@
 <odoo>
-    <record id="dkm_traceback_log_tree_view" model="ir.ui.view">
-        <field name="name">dkm.traceback.tree.view</field>
-        <field name="model">dkm.traceback.log</field>
+    <record id="bk_traceback_log_tree_view" model="ir.ui.view">
+        <field name="name">bk.traceback.tree.view</field>
+        <field name="model">bk.traceback.log</field>
         <field name="arch" type="xml">
             <tree>
                 <field name="name"/>
@@ -11,9 +11,9 @@
         </field>
     </record>
 
-    <record id="dkm_traceback_log_form_view" model="ir.ui.view">
-        <field name="name">dkm.traceback.log.form.view</field>
-        <field name="model">dkm.traceback.log</field>
+    <record id="bk_traceback_log_form_view" model="ir.ui.view">
+        <field name="name">bk.traceback.log.form.view</field>
+        <field name="model">bk.traceback.log</field>
         <field name="arch" type="xml">
             <form>
                 <sheet>
@@ -42,9 +42,9 @@
         </field>
     </record>
 
-    <record id="dkm_traceback_log_search_view" model="ir.ui.view">
-        <field name="name">dkm.traceback.log.search.view</field>
-        <field name="model">dkm.traceback.log</field>
+    <record id="bk_traceback_log_search_view" model="ir.ui.view">
+        <field name="name">bk.traceback.log.search.view</field>
+        <field name="model">bk.traceback.log</field>
         <field name="arch" type="xml">
             <search>
                 <field name="code" />
@@ -61,8 +61,8 @@
         </field>
     </record>
 
-    <record id="dkm_traceback_log_window" model="ir.actions.act_window">
-        <field name="name">DKM Traceback Log</field>
+    <record id="bk_traceback_log_window" model="ir.actions.act_window">
+        <field name="name">BK Traceback Log</field>
         <field name="res_model">dkm.traceback.log</field>
         <field name="view_mode">tree,form</field>
     </record>
