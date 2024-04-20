@@ -22,7 +22,7 @@ def random_str(size=7, chars=string.ascii_lowercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 
 
-def dkm_api(purpose='api_general', log_traceback=True, custom_response=False, token_on='header', **api_kwargs):
+def bk_api(purpose='api_general', log_traceback=True, custom_response=False, token_on='header', **api_kwargs):
     """ Make a route, (required database) to api, type of route should be 'http' to format data
     :param str purpose: purpose of token for check
     :param bool log_traceback: log traceback when Internal Server Error.
@@ -52,10 +52,10 @@ def dkm_api(purpose='api_general', log_traceback=True, custom_response=False, to
                 if token_on == 'url_params':
                     token = kwargs.get('token')
 
-                dkm_token = request.env['dkm.token'].sudo().ensure_token_valid(token, purpose)
-                request.uid = dkm_token.user_id.id
+                bk_token = request.env['bk.token'].sudo().ensure_token_valid(token, purpose)
+                request.uid = bk_token.user_id.id
                 if api_kwargs.get('one_time_token'):
-                    dkm_token.sudo().unlink()
+                    bk_token.sudo().unlink()
 
                 res = func(*args, **kwargs)
                 if custom_response:
@@ -73,7 +73,7 @@ def dkm_api(purpose='api_general', log_traceback=True, custom_response=False, to
                 msg_error = 'Internal Server Error.'
                 if log_traceback:
                     traceback_code = random_str()
-                    request.env['dkm.traceback.log'].sudo().create({
+                    request.env['bk.traceback.log'].sudo().create({
                         'name': 'Api Error',
                         'traceback': traceback_txt,
                         'code': traceback_code,

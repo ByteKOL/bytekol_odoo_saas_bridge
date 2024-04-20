@@ -1,0 +1,15 @@
+<odoo>
+    <record id="bk_token_user_rule" model="ir.rule">
+        <field name="name">BK Token User Rule</field>
+        <field name="model_id" ref="model_bk_token"/>
+        <field name="domain_force">[('user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+    <record id="bk_token_admin_rule" model="ir.rule">
+        <field name="name">BK Token Admin Rule</field>
+        <field name="model_id" ref="model_bk_token"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('base.group_system'))]"/>
+    </record>
+</odoo>

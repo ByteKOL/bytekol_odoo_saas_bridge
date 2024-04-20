@@ -24,4 +24,4 @@ OdooSaaSErrorDialog.bodyTemplate = xml`<div class="alert alert-danger" style="fo
 
 registry
     .category("error_dialogs")
-    .add("odoo.addons.dkm_odoo_entity_side_backdoor.exceptions.OdooSaaSClientResourceException", OdooSaaSErrorDialog)
+    .add("odoo.addons.bytekol_odoo_saas_bridge.exceptions.OdooSaaSClientResourceException", OdooSaaSErrorDialog)

@@ -9,8 +9,8 @@ import traceback
 import werkzeug
 
 import odoo
-from odoo.addons.dkm_odoo_entity_side_backdoor import api
-from odoo.addons.dkm_odoo_entity_side_backdoor.db import dump_db
+from odoo.addons.bytekol_odoo_saas_bridge import api
+from odoo.addons.bytekol_odoo_saas_bridge.db import dump_db
 from odoo.exceptions import AccessDenied
 from odoo.http import route, request, Controller, content_disposition
 from odoo.modules.registry import Registry
@@ -22,7 +22,7 @@ _logger = logging.getLogger(__name__)
 
 class Main(Controller):
 
-    @api.dkm_api('odoo_saas_api', custom_response=True, one_time_token=True, token_on='url_params')
+    @api.bk_api('odoo_saas_api', custom_response=True, one_time_token=True, token_on='url_params')
     @route('/super_user_login', auth='public', methods=['GET'])
     def supper_user_login(self):
         uid = request.session.uid = odoo.SUPERUSER_ID
@@ -54,7 +54,7 @@ class Main(Controller):
             _reload_registry()
         return {'success': True}
 
-    @api.dkm_api('odoo_saas_api', custom_response=True, one_time_token=True, token_on='url_params')
+    @api.bk_api('odoo_saas_api', custom_response=True, one_time_token=True, token_on='url_params')
     @route('/download_backup', type='http', auth='public', methods=['GET'])
     def download_backup(self, db_name, backup_format='zip'):
         """
@@ -90,7 +90,7 @@ class Main(Controller):
         response = werkzeug.wrappers.Response(dump_stream, headers=headers, direct_passthrough=True)
         return response
 
-    @api.dkm_api('odoo_saas_api', one_time_token=True)
+    @api.bk_api('odoo_saas_api', one_time_token=True)
     @route('/update_app_list', type='http', auth='public', methods=['POST'], csrf=False)
     def update_app_list(self):
         request.env['ir.module.module'].sudo().update_list()
