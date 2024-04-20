@@ -1,7 +1,7 @@
 <odoo>
-    <record id="dkm_token_tree_view" model="ir.ui.view">
-        <field name="name">dkm.token.tree.view</field>
-        <field name="model">dkm.token</field>
+    <record id="bk_token_tree_view" model="ir.ui.view">
+        <field name="name">bk.token.tree.view</field>
+        <field name="model">bk.token</field>
         <field name="arch" type="xml">
             <tree>
                 <field name="name"/>
@@ -15,9 +15,9 @@
         </field>
     </record>
 
-    <record id="dkm_token_form_view" model="ir.ui.view">
-        <field name="name">dkm.token.form.view</field>
-        <field name="model">dkm.token</field>
+    <record id="bk_token_form_view" model="ir.ui.view">
+        <field name="name">bk.token.form.view</field>
+        <field name="model">bk.token</field>
         <field name="arch" type="xml">
             <form>
                 <sheet>
@@ -47,9 +47,9 @@
         </field>
     </record>
 
-    <record id="dkm_token_search_view" model="ir.ui.view">
-        <field name="name">dkm.token.search.view</field>
-        <field name="model">dkm.token</field>
+    <record id="bk_token_search_view" model="ir.ui.view">
+        <field name="name">bk.token.search.view</field>
+        <field name="model">bk.token</field>
         <field name="arch" type="xml">
             <search>
                 <field name="name"/>
@@ -73,9 +73,9 @@
         </field>
     </record>
 
-    <record id="dkm_token_action_window" model="ir.actions.act_window">
-        <field name="name">Dotd Token</field>
-        <field name="res_model">dkm.token</field>
+    <record id="bk_token_action_window" model="ir.actions.act_window">
+        <field name="name">BK Token</field>
+        <field name="res_model">bk.token</field>
         <field name="view_mode">tree,form</field>
     </record>
 </odoo>

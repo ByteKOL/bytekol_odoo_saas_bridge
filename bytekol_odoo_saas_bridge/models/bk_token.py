@@ -2,12 +2,12 @@ import uuid
 from datetime import timedelta
 
 from odoo import models, fields, api, SUPERUSER_ID
-from odoo.addons.dkm_odoo_entity_side_backdoor.api import TokenException
+from odoo.addons.bytekol_odoo_saas_bridge.api import TokenException
 
 
-class DkmToken(models.Model):
-    _name = 'dkm.token'
-    _description = 'dkm Token'
+class BKToken(models.Model):
+    _name = 'bk.token'
+    _description = _name
     _mail_post_access = 'read'
     _order = 'id desc'
 
@@ -98,7 +98,7 @@ class DkmToken(models.Model):
         return token
 
     @api.model
-    def _cron_clean_dkm_token(self):
+    def _cron_clean_bk_token(self):
         tokens_to_unlink = self.search([
             ('clean_type', '=', 'clean_when_expired')
         ]).filtered(lambda t: t._is_expire())

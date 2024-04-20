@@ -1,4 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_odoo_saas_client_data,odoo.saas.client.data,model_odoo_saas_client_data,base.group_user,1,0,0,0
-access_dkm_token_user,dkm.token.user,model_dkm_token,base.group_user,1,1,1,1
-access_dkm_traceback_log,dkm.traceback.log,model_dkm_traceback_log,base.group_system,1,1,1,1
+access_bk_token_user,bk.token.user,model_bk_token,base.group_user,1,1,1,1
+access_bk_traceback_log,bk.traceback.log,model_bk_traceback_log,base.group_system,1,1,1,1

@@ -6,15 +6,15 @@ from odoo.tests.common import TransactionCase
 
 
 @tagged('post_install', '-at_install')
-class TestDkmToken(TransactionCase):
+class TestBKToken(TransactionCase):
 
     @classmethod
     def setUpClass(cls):
-        super(TestDkmToken, cls).setUpClass()
+        super(TestBKToken, cls).setUpClass()
         cls.env = cls.env(context={**cls.env.context, **{
             'test_mode': True
         }})
-        cls.token1, cls.token2 = cls.env['dkm.token'].create([
+        cls.token1, cls.token2 = cls.env['bk.token'].create([
             {'name': 'token1', 'token': '1x3'},
             {'name': 'token2', 'token': '1x4'},
         ])
@@ -36,15 +36,15 @@ class TestDkmToken(TransactionCase):
 
     def test_is_token_valid(self):
         token_txt = '888x29xk1s'
-        new_token = self.env['dkm.token'].create({
+        new_token = self.env['bk.token'].create({
             'token': token_txt,
             'name': 'n1',
             'purpose': 'api_general',
             'live_time': 10
         })
 
-        self.assertTrue(self.env['dkm.token'].is_token_valid(token_txt, 'api_general'))
-        self.assertFalse(self.env['dkm.token'].is_token_valid(token_txt, 'gg33'))
+        self.assertTrue(self.env['bk.token'].is_token_valid(token_txt, 'api_general'))
+        self.assertFalse(self.env['bk.token'].is_token_valid(token_txt, 'gg33'))
         now = new_token.create_date + relativedelta(seconds=11)
         with patch('odoo.fields.Datetime.now', return_value=now):
-            self.assertFalse(self.env['dkm.token'].is_token_valid(token_txt, 'api_general'))
+            self.assertFalse(self.env['bk.token'].is_token_valid(token_txt, 'api_general'))
