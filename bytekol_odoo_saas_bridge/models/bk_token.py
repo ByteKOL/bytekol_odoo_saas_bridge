@@ -6,7 +6,7 @@ from odoo.addons.bytekol_odoo_saas_bridge.api import TokenException
 
 
 class BKToken(models.Model):
-    _name = 'bytekol.token'
+    _name = 'bk.token'
     _description = _name
     _mail_post_access = 'read'
     _order = 'id desc'
@@ -98,7 +98,7 @@ class BKToken(models.Model):
         return token
 
     @api.model
-    def _cron_clean_dkm_token(self):
+    def _cron_clean_bk_token(self):
         tokens_to_unlink = self.search([
             ('clean_type', '=', 'clean_when_expired')
         ]).filtered(lambda t: t._is_expire())

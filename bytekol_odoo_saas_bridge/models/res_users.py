@@ -1,5 +1,5 @@
 from odoo import api, fields, models, _
-from odoo.addons.dkm_odoo_entity_side_backdoor.exceptions import OdooSaaSClientResourceException
+from odoo.addons.bytekol_odoo_saas_bridge.exceptions import OdooSaaSClientResourceException
 from odoo.exceptions import UserError
 
 

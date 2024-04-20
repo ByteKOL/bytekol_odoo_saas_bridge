@@ -1,5 +1,5 @@
 from odoo import models, _
-from odoo.addons.dkm_odoo_entity_side_backdoor.exceptions import OdooSaaSClientResourceException
+from odoo.addons.bytekol_odoo_saas_bridge.exceptions import OdooSaaSClientResourceException
 from odoo.exceptions import UserError
 
 
@@ -8,8 +8,8 @@ class IrModule(models.Model):
 
     def button_uninstall(self):
         to_uninstall = self | self.downstream_dependencies()
-        if 'dkm_odoo_entity_side_backdoor' in to_uninstall.mapped('name'):
-            raise UserError(_('The module "dkm_odoo_entity_side_backdoor" cannot be uninstalled'))
+        if 'bytekol_odoo_saas_bridge' in to_uninstall.mapped('name'):
+            raise UserError(_('The module "bytekol_odoo_saas_bridge" cannot be uninstalled'))
         return super(IrModule, self).button_uninstall()
 
     def button_immediate_install(self):

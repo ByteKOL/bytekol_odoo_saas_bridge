@@ -1,1 +1,1 @@
-from . import test_dkm_token
+from . import test_bk_token

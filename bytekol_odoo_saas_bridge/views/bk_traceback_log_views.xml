@@ -63,7 +63,7 @@
 
     <record id="bk_traceback_log_window" model="ir.actions.act_window">
         <field name="name">BK Traceback Log</field>
-        <field name="res_model">dkm.traceback.log</field>
+        <field name="res_model">bk.traceback.log</field>
         <field name="view_mode">tree,form</field>
     </record>
 </odoo>
