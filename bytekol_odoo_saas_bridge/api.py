@@ -23,7 +23,7 @@ def random_str(size=7, chars=string.ascii_lowercase + string.digits):
 
 
 def bk_api(purpose='api_general', log_traceback=True, custom_response=False, token_on='header', **api_kwargs):
-    """ Make a route, (required database) to api, type of route should be 'http' to format data
+    """ Make a route, (required database) to api, type of route should be 'http'
     :param str purpose: purpose of token for check
     :param bool log_traceback: log traceback when Internal Server Error.
     :param str token_on: where to get token ['header', 'url_params']
