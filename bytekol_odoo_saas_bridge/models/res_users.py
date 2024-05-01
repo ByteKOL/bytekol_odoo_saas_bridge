@@ -1,6 +1,7 @@
 from odoo import api, fields, models, _
 from odoo.addons.bytekol_odoo_saas_bridge.exceptions import OdooSaaSClientResourceException
 from odoo.exceptions import UserError
+from markupsafe import Markup
 
 
 class ResUsers(models.Model):
@@ -20,7 +21,7 @@ class ResUsers(models.Model):
                 '<a href="%s" target="_new">Buy more users</a>'
                 % client_data.odoo_entity_dashboard_link
             )
-            raise OdooSaaSClientResourceException(message)
+            raise OdooSaaSClientResourceException(Markup(message))
         return users
 
     @api.model

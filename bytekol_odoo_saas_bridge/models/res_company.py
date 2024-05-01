@@ -1,6 +1,7 @@
 from odoo import api, models, fields, _
 from odoo.addons.bytekol_odoo_saas_bridge.exceptions import OdooSaaSClientResourceException
 from odoo.exceptions import UserError
+from markupsafe import Markup
 
 
 class ResCompany(models.Model):
@@ -17,5 +18,5 @@ class ResCompany(models.Model):
                 "Details of plans can be found here: <br/>"
                 '<a href="%s" target="_blank">%s</a>' % (client_data.plan_name, client_data.pricing_url, client_data.pricing_url)
             )
-            raise OdooSaaSClientResourceException(message)
+            raise OdooSaaSClientResourceException(Markup(message))
         return records

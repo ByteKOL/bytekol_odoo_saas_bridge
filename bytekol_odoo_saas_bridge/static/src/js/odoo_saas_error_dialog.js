@@ -5,6 +5,8 @@ import {registry} from "@web/core/registry";
 import {_t} from "@web/core/l10n/translation";
 import {standardErrorDialogProps} from "@web/core/errors/error_dialogs"
 const {xml} = owl;
+import { markup } from "@odoo/owl";
+
 
 export class OdooSaaSErrorDialog extends Dialog {
     setup() {
@@ -12,9 +14,9 @@ export class OdooSaaSErrorDialog extends Dialog {
         this.title = _t("Resource Limit Alert");
         const { data, message } = this.props;
         if (data && data.arguments && data.arguments.length > 0) {
-            this.message = data.arguments[0];
+            this.message = markup(data.arguments[0]);
         } else {
-            this.message = message;
+            this.message = markup(message);
         }
     }
 }
@@ -22,7 +24,8 @@ export class OdooSaaSErrorDialog extends Dialog {
 OdooSaaSErrorDialog.props = {
     ...standardErrorDialogProps,
 }
-OdooSaaSErrorDialog.bodyTemplate = xml`
+// TODO: cannot use t-raw, inherit new template
+OdooSaaSErrorDialog.template = xml`
     <t t-name="web.Dialog">
         <div class="o_dialog" t-att-id="id" t-att-class="{ o_inactive_modal: !data.isActive }">
             <div role="dialog" class="modal d-block"
@@ -50,7 +53,7 @@ OdooSaaSErrorDialog.bodyTemplate = xml`
                         </footer>
                         <main class="modal-body" t-attf-class="{{ props.bodyClass }} {{ !props.withBodyPadding ? 'p-0': '' }}">
                             <div class="alert alert-danger" style="font-size: 1.3rem" role="alert">
-                                <t t-raw="message"/>
+                                <t t-out="message"/>
                             </div>
                         </main>
                     </div>

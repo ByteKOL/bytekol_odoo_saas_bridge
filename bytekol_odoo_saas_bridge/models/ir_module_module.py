@@ -1,6 +1,7 @@
 from odoo import models, _
 from odoo.addons.bytekol_odoo_saas_bridge.exceptions import OdooSaaSClientResourceException
 from odoo.exceptions import UserError
+from markupsafe import Markup
 
 
 class IrModule(models.Model):
@@ -50,7 +51,7 @@ class IrModule(models.Model):
                         '<a href="%s" target="_blank">%s</a>'
                         % (client_data.plan_name, banned_module, client_data.pricing_url, client_data.pricing_url)
                     )
-                    raise OdooSaaSClientResourceException(message)
+                    raise OdooSaaSClientResourceException(Markup(message))
             cr.rollback()
         self = self.with_env(self.env(cr=old_cr))
         return super(IrModule, self).button_immediate_install()
