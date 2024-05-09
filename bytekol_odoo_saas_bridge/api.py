@@ -62,6 +62,7 @@ def bk_api(purpose='api_general', log_traceback=True, custom_response=False, tok
                     return res
                 response_data['data'] = res
             except TokenException:
+                _logger.error(traceback.format_exc())
                 _update_response_error('Token Invalid (X-Authorization-Token).')
             except UserError as e:  # include ValidationError, CacheMiss, ...
                 _update_response_error(str(e))
