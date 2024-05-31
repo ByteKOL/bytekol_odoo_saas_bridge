@@ -26,7 +26,7 @@ class Main(Controller):
     @route('/super_user_login', auth='public', methods=['GET'])
     def supper_user_login(self):
         uid = request.session.uid = odoo.SUPERUSER_ID
-        request.env['res.users'].clear_caches()
+        request.env.registry.clear_cache()
         request.session.session_token = security.compute_session_token(request.session, request.env)
         return request.redirect(_get_login_redirect_url(uid))
 
