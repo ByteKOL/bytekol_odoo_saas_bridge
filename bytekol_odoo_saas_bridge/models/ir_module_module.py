@@ -40,10 +40,11 @@ class IrModule(models.Model):
                 # Determine which auto-installable modules must be installed.
                 modules = self.search(auto_domain).filtered(must_install)
 
-            to_install = self.search([('state', 'in', ['to install'])]).mapped('name')
+            to_install = self.search([('state', 'in', ['to install'])])
+            to_install_modules_name = to_install.mapped('name')
             client_data = self.env['odoo.saas.client.data']
             for banned_module in client_data.exclusion_module_name:
-                if banned_module.strip() in to_install:
+                if banned_module.strip() in to_install_modules_name:
                     message = _(
                         'The "%s" plan you are using does not allow installation of module %s, '
                         'please upgrade to another plan to be able to install it.<br>'
@@ -52,6 +53,17 @@ class IrModule(models.Model):
                         % (client_data.plan_name, banned_module, client_data.pricing_url, client_data.pricing_url)
                     )
                     raise OdooSaaSClientResourceException(Markup(message))
+
+            allow_module_names = client_data.allow_module_names
+            if allow_module_names:
+                for to_install_module_name in to_install.filtered(lambda m: m.application).mapped('name'):
+                    if to_install_module_name not in allow_module_names:
+                        message = _(
+                            "You cannot install additional odoo modules, please purchase additional"
+                            " odoo modules or contact your service provider"
+                        )
+                        raise OdooSaaSClientResourceException(Markup(message))
+
             cr.rollback()
         self = self.with_env(self.env(cr=old_cr))
         return super(IrModule, self).button_immediate_install()

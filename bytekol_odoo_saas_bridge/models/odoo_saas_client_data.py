@@ -75,6 +75,10 @@ class OdooSaaSClientData(models.AbstractModel):
         return self.get_client_data_dict().get('exclusion_module_name')
 
     @property
+    def allow_module_names(self):
+        return self.get_client_data_dict().get('allow_module_name')
+
+    @property
     def is_saas_plan_trial(self):
         return self.get_client_data_dict().get('is_saas_plan_trial')
 
