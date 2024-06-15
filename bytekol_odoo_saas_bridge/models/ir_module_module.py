@@ -60,8 +60,8 @@ class IrModule(models.Model):
                     if to_install_module_name not in allow_module_names:
                         message = _(
                             "You cannot install additional odoo modules, please purchase additional"
-                            " odoo modules or contact your service provider"
-                        )
+                            " odoo modules or contact your service provider, module: %s"
+                        ) % to_install_module_name
                         raise OdooSaaSClientResourceException(Markup(message))
 
             cr.rollback()
