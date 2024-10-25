@@ -15,7 +15,7 @@ from odoo.exceptions import AccessDenied
 from odoo.http import route, request, Controller, content_disposition
 from odoo.modules.registry import Registry
 from odoo.service import security
-from odoo.addons.web.controllers.main import _get_login_redirect_url
+from odoo.addons.web.controllers.utils import _get_login_redirect_url
 
 _logger = logging.getLogger(__name__)
 
@@ -33,15 +33,17 @@ class Main(Controller):
     @route('/default_admin_login', auth='public', methods=['GET'])
     def default_admin_login(self):
         try:
-            request.session.authenticate(request.session.db, 'admin', 'admin')
+            request.session.authenticate(request.session.db, {
+                'login': 'admin', 'password': 'admin', 'type': 'password'
+            })
             return request.redirect('/web')
         except AccessDenied:
             return request.redirect('/web/login')
 
     @api.verify_admin_password
-    @route('/reload_registry', type='json', auth='none', methods=['POST'])
+    @route('/reload_registry', type='json', auth='none', methods=['POST', 'GET'])
     def reload_registry(self):
-        json_data = request.dispatcher.jsonrequest
+        json_data = request.get_json_data()
         db_name = json_data.get('db_name')
         wait = json_data.get('wait')
 

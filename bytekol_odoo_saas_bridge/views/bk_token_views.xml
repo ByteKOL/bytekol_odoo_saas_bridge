@@ -1,9 +1,9 @@
 <odoo>
-    <record id="bk_token_tree_view" model="ir.ui.view">
-        <field name="name">bk.token.tree.view</field>
+    <record id="bk_token_list_view" model="ir.ui.view">
+        <field name="name">bk.token.list.view</field>
         <field name="model">bk.token</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="name"/>
                 <field name="token"/>
                 <field name="user_id"/>
@@ -11,7 +11,7 @@
                 <field name="live_time"/>
                 <field name="date_expire"/>
                 <field name="is_expire"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -76,6 +76,6 @@
     <record id="bk_token_action_window" model="ir.actions.act_window">
         <field name="name">BK Token</field>
         <field name="res_model">bk.token</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 </odoo>
