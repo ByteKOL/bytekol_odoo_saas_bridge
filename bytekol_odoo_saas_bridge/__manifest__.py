@@ -3,7 +3,7 @@
     'description': "Bytekol Odoo SaaS Bridge",
     'version': '1.0.0',
     'category': "Tools",
-    'depends': ['base'],
+    'depends': ['web'],
     'data': [
         'security/ir.model.access.csv',
         'security/security.xml',
@@ -13,6 +13,8 @@
     'assets': {
         'web.assets_backend': [
             '/bytekol_odoo_saas_bridge/static/src/js/odoo_saas_error_dialog.js',
+            '/bytekol_odoo_saas_bridge/static/src/toolbar/*',
+            '/bytekol_odoo_saas_bridge/static/src/dialogs/*',
         ],
     },
     'installable': True,
