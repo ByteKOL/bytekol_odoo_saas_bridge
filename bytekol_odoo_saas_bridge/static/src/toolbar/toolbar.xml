@@ -1,0 +1,8 @@
+<templates>
+    <t t-name="bytekol_odoo_saas_bridge.staging_info_toolbar">
+        <div t-on-click="ev => this._onClickStagingInfo()" id="toolbar_staging">
+            <span class="fa fa-info-circle"/>
+            <span t-if="!isMobile" style="margin-left: 8px">Staging Database</span>
+        </div>
+    </t>
+</templates>
