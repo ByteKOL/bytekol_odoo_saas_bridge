@@ -1,0 +1,17 @@
+#toolbar_staging {
+    margin-top: -10px;
+    margin-bottom: -10px;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    align-items: center;
+    padding-left: 5px;
+    padding-right: 5px;
+    cursor: pointer;
+    color: #FFFFFFFF;
+    background-color: #457AC5FF;
+
+    &:hover {
+        background-color: #3D6CABFF;
+    }
+}
