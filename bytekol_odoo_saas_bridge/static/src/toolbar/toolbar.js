@@ -26,7 +26,7 @@ export class StagingInfo extends Component {
 <div class="alert alert-info" role="alert">This is a staging database for: <a href="${origin_odoo_entity_url}" target="_blank">${origin_odoo_entity_url}</a>
 You can use it to test some actions without affecting the real database like installing/uninstalling modules, ...
 
-We have disabled Scheduled Actions and Email servers, you should also check and disable the 3rd party connection features to avoid affecting the real database.            
+We have disabled Scheduled Actions, Email servers and update robots.txt to prevent search engines from indexing the website, you should also check and disable the 3rd party connection features to avoid affecting the real database.            
 </div>
         `)
         this.dialog.add(CustomAlertDialog, {
