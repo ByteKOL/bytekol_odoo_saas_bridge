@@ -57,6 +57,9 @@ def bk_api(purpose='api_general', log_traceback=True, custom_response=False, tok
                 if api_kwargs.get('one_time_token'):
                     bk_token.sudo().unlink()
 
+                json_data = request.httprequest.get_json() or {}
+                kwargs.update(json_data)
+
                 res = func(*args, **kwargs)
                 if custom_response:
                     return res

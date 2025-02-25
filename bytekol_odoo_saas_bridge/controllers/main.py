@@ -94,3 +94,18 @@ class Main(Controller):
     @route('/update_app_list', type='http', auth='public', methods=['POST'], csrf=False)
     def update_app_list(self):
         request.env['ir.module.module'].sudo().update_list()
+
+    @api.bk_api('odoo_saas_api', one_time_token=True)
+    @route('/bk_saas_rpc', type='json', auth='public', methods=['POST'], csrf=False)
+    def rpc_call(self, **kwargs):
+        model = kwargs['model']
+        method = kwargs['method']
+        records_ids = kwargs.get('record_ids', [])
+        method_args = kwargs.get('method_args', [])
+        method_kwargs = kwargs.get('method_kwargs', {})
+
+        records = request.env[model].browse(records_ids).sudo()
+        result = getattr(records, method)(*method_args, **method_kwargs)
+        return {
+            'result': result,
+        }
