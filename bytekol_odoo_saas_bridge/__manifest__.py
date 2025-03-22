@@ -5,6 +5,7 @@
     'category': "Tools",
     'depends': ['web'],
     'data': [
+        'data/cron.xml',
         'security/ir.model.access.csv',
         'security/security.xml',
         'views/bk_token_views.xml',

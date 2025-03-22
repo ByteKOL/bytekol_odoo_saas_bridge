@@ -112,3 +112,9 @@ class BKToken(models.Model):
             'purpose': 'verify_request',
             'live_time': live_time
         })
+
+    @api.model
+    def _cron_test_123(self):
+        import logging
+        _logger = logging.getLogger()
+        _logger.error('Cron _cron_test_123 is running!')
