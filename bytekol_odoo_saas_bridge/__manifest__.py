@@ -1,6 +1,6 @@
 {
-    'name': 'Bytekol Odoo SaaS Bridge',
-    'description': "Bytekol Odoo SaaS Bridge",
+    'name': 'SaaS Bridge',
+    'description': "SaaS Bridge",
     'version': '1.0.0',
     'category': "Tools",
     'depends': ['web'],
