@@ -1,5 +1,5 @@
 {
-    "name": "Bytekol Database Filter",
+    "name": "BK Database Filter",
     "summary": "Filter database from header",
     "version": "1.0.0",
     "category": "Tools",
