@@ -26,3 +26,24 @@ class ResUsers(models.Model):
     @api.model
     def get_internal_user_count(self):
         return self.sudo().search_count([('share', '=', False), ('active', '=', True)])
+
+    @api.model
+    def _saas_bridge_get_users_data(self):
+        users = self.search([])
+        users_data = []
+        for u in users:
+            user_type = 'Public'
+            if u.has_group('base.group_user'):
+                user_type = 'Internal'
+            elif u.has_group('base.group_portal'):
+                user_type = 'Portal'
+            elif u.has_group('base.group_system'):
+                user_type = 'Administrator'
+
+            users_data.append({
+                'name': u.name,
+                'login': u.login,
+                'id': u.id,
+                'user_type': user_type,
+            })
+        return users_data
