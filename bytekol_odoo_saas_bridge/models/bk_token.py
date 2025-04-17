@@ -76,7 +76,7 @@ class BKToken(models.Model):
         :param purpose:
         :return:
         """
-        token_exist = self.search([
+        token_exist = self.sudo().search([
             ('token', '=', token),
             ('purpose', '=', purpose)
         ], limit=1).filtered(lambda t: not t._is_expire())
