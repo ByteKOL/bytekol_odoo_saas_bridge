@@ -54,6 +54,7 @@ def bk_api(purpose='api_general', log_traceback=True, custom_response=False, tok
 
                 bk_token = request.env['bk.token'].sudo().ensure_token_valid(token, purpose)
                 request.update_env(user=bk_token.user_id.id)
+                request.env.registry.clear_cache()
                 if api_kwargs.get('one_time_token'):
                     bk_token.sudo().unlink()
 
@@ -63,7 +64,14 @@ def bk_api(purpose='api_general', log_traceback=True, custom_response=False, tok
                 res = func(*args, **kwargs)
                 if custom_response:
                     return res
-                response_data['data'] = res
+                if isinstance(res, (int, dict, float, list, str, type(None))):
+                    response_data['data'] = res
+                elif isinstance(res, OdooResponse):
+                    try:
+                        response_data['data'] = json.loads(res.data)
+                    except Exception:
+                        _logger.warning(f'Cannot loads response {res.data}')
+
             except TokenException:
                 _logger.error(traceback.format_exc())
                 _update_response_error('Token Invalid (X-Authorization-Token).')
