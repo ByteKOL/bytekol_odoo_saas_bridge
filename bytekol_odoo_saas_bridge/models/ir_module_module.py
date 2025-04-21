@@ -7,6 +7,12 @@ from markupsafe import Markup
 class IrModule(models.Model):
     _inherit = 'ir.module.module'
 
+    def _get_all_modules_to_install(self):
+        return self.with_context(get_modules_to_install_only=True).button_immediate_install().ids
+
+    def _get_all_modules_to_uninstall(self):
+        return (self | self.downstream_dependencies()).ids
+
     def button_uninstall(self):
         to_uninstall = self | self.downstream_dependencies()
         if 'bytekol_odoo_saas_bridge' in to_uninstall.mapped('name'):
@@ -14,7 +20,8 @@ class IrModule(models.Model):
         return super(IrModule, self).button_uninstall()
 
     def button_immediate_install(self):
-        if not self.env['odoo.saas.client.data'].plan_id:
+        is_get_modules_to_install_only = self.env.context.get('get_modules_to_install_only')
+        if not self.env['odoo.saas.client.data'].plan_id and not is_get_modules_to_install_only:
             return super(IrModule, self).button_immediate_install()
 
         old_cr = self.env.cr
@@ -42,6 +49,10 @@ class IrModule(models.Model):
 
             to_install = self.search([('state', 'in', ['to install'])])
             to_install_modules_name = to_install.mapped('name')
+            if is_get_modules_to_install_only:
+                cr.rollback()
+                return to_install
+
             client_data = self.env['odoo.saas.client.data']
             for banned_module in client_data.exclusion_module_name:
                 if banned_module.strip() in to_install_modules_name:
