@@ -38,7 +38,7 @@ class Main(Controller):
         uid = request.session.uid = int(kwargs['user_id'])
         request.env.registry.clear_cache()
         request.session.session_token = security.compute_session_token(request.session, request.env)
-        if user.sudo().has_groups('base.group_portal'):
+        if user.sudo().has_group('base.group_portal'):
             return request.redirect('/')
         return request.redirect(_get_login_redirect_url(uid))
 
@@ -53,7 +53,7 @@ class Main(Controller):
     @api.verify_admin_password
     @route('/reload_registry', type='json', auth='none', methods=['POST'])
     def reload_registry(self):
-        json_data = request.dispatcher.jsonrequest
+        json_data = request.get_json_data()
         db_name = json_data.get('db_name')
         wait = json_data.get('wait')
 
