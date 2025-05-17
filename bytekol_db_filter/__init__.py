@@ -11,10 +11,12 @@ db_filter_origin = http.db_filter
 
 
 def db_filter(dbs, host=None):
-    dbs_orig = db_filter_origin(dbs, host)
     httprequest = http.request.httprequest
     db_filter_hdr = httprequest.environ.get("HTTP_X_ODOO_DBFILTER")
-    return [db for db in dbs if re.match(db_filter_hdr, db)] if db_filter_hdr else dbs_orig
+    if db_filter_hdr:
+        return [db_filter_hdr]
+    else:
+        return db_filter_origin(dbs, host)
 
 
 http.db_filter = db_filter
