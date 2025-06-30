@@ -8,7 +8,9 @@
         'security/ir.model.access.csv',
         'security/security.xml',
         'views/bk_token_views.xml',
-        'views/bk_traceback_log_views.xml'
+        'views/bk_traceback_log_views.xml',
+        'views/simple_queue_job_views.xml',
+        'views/menus.xml',
     ],
     'assets': {
         'web.assets_backend': [
