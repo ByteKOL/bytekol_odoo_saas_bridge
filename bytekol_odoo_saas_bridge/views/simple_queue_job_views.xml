@@ -1,0 +1,74 @@
+<odoo>
+    <record model="ir.ui.view" id="simple_queue_job_list_view">
+        <field name="name">simple_queue_job_list_view</field>
+        <field name="model">simple.queue.job</field>
+        <field name="arch" type="xml">
+            <list decoration-success="state == 'done'"
+                  decoration-danger="state == 'failed'"
+                  decoration-muted="state == 'draft'"
+            >
+                <field name="create_date"/>
+                <field name="name"/>
+                <field name="model"/>
+                <field name="method"/>
+                <field name="state"/>
+            </list>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="simple_queue_job_form_view">
+        <field name="name">simple_queue_job_form_view</field>
+        <field name="model">simple.queue.job</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <field name="state" widget="statusbar" options="{'clickable': '1'}"/>
+                    <button name="action_execute" string="Execute" type="object"
+                            class="btn btn-primary"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="total_retries"/>
+                        <field name="retry_count"/>
+                    </group>
+
+                    <group>
+                        <field name="model"/>
+                        <field name="method"/>
+                        <field name="res_ids_json"/>
+                        <field name="args_json"/>
+                        <field name="kwargs_json"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="simple_queue_job_search_view">
+        <field name="name">simple_queue_job_search_view</field>
+        <field name="model">simple.queue.job</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="model"/>
+                <field name="method"/>
+                <field name="create_date"/>
+
+                <group string="Group By" expand="0">
+                    <filter name="group_by_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_by_name" string="Name" context="{'group_by': 'name'}"/>
+                    <filter name="group_by_model" string="Model" context="{'group_by': 'model'}"/>
+                    <filter name="group_by_method" string="Method" context="{'group_by': 'method'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="simple_queue_job_act_window">
+        <field name="name">Simple Queue Job</field>
+        <field name="res_model">simple.queue.job</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>
