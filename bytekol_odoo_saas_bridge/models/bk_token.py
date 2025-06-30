@@ -12,7 +12,7 @@ class BKToken(models.Model):
     _order = 'id desc'
 
     name = fields.Char(required=True)
-    token = fields.Char(required=True, readonly=True, default=uuid.uuid4())
+    token = fields.Char(required=True, readonly=True, default=str(uuid.uuid4()), copy=False)
     user_id = fields.Many2one('res.users', string='User', default=lambda self: self.env.user)
     live_time = fields.Float(help="Live time (seconds) since creation date of token, "
                                   "If value <= 0 then effect is permanent.", default=0)
@@ -28,6 +28,10 @@ class BKToken(models.Model):
         ('no', 'No'),
         ('clean_when_expired', 'Clean when expired')
     ], default='clean_when_expired')
+
+    _sql_constraints = [
+        ('unique_token', 'UNIQUE(token)', 'Token must be unique.'),
+    ]
 
     def _compute_is_expire(self):
         for r in self:
