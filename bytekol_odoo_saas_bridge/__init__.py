@@ -1,9 +1,21 @@
+import os
+import json
+import logging
+import requests
+import time
+
 from . import models
 from . import controllers
 
 
 import odoo
-import logging
+from odoo.tools import config
+from odoo import fields
+
+saas_datadir = os.path.join(config.get('data_dir'), 'saas_data')
+if not os.path.exists(saas_datadir):
+    os.mkdir(saas_datadir)
+
 _logger = logging.getLogger(__name__)
 
 if 'bytekol_odoo_saas_bridge' not in odoo.tools.config.get('server_wide_modules', '').split(','):
@@ -76,3 +88,90 @@ def process_limit_patch(self):
         self.limit_reached_time = None
 
 ThreadedServer.process_limit = process_limit_patch
+
+
+def _scan_modules_file_change():
+    import time
+    import hashlib
+
+    def _is_odoo_module(path):
+        if not os.path.isdir(path):
+            return False
+        manifest_path = os.path.join(path, '__manifest__.py')
+        old_manifest_path = os.path.join(path, '__openerp__.py')
+        return os.path.isfile(manifest_path) or os.path.isfile(old_manifest_path)
+
+    def _get_checksum_directory_metadata(path, hash_algo='sha256'):
+        h = hashlib.new(hash_algo)
+        for root, dirs, files in sorted(os.walk(path)):
+            for fname in sorted(files):
+                file_path = os.path.join(root, fname)
+                rel_path = os.path.relpath(file_path, path).replace(os.sep, '/')
+                try:
+                    stat = os.stat(file_path)
+                    h.update(rel_path.encode('utf-8'))
+                    h.update(str(stat.st_mtime).encode('utf-8'))
+                    h.update(str(stat.st_size).encode('utf-8'))
+                except Exception as e:
+                    continue
+        return h.hexdigest()
+
+    addon_paths = [dir_path for dir_path in config.get('addons_path').split(',') if dir_path]
+    module_check_sum = dict()
+
+    for dir_path in addon_paths:
+        for root, dirs, files in os.walk(dir_path):
+            for dir_name in dirs:
+                full_dir_path = os.path.join(root, dir_name)
+                if not _is_odoo_module(full_dir_path):
+                    continue
+                if dir_name not in module_check_sum:
+                    module_check_sum[dir_name] = _get_checksum_directory_metadata(full_dir_path)
+
+    modules_changed = []
+
+    check_sum_addon_path_file_path = os.path.join(saas_datadir, 'checksum_addon_path.json')
+    if not os.path.exists(check_sum_addon_path_file_path):
+        data_to_push = {}
+        for module_name, checksum in module_check_sum.items():
+            data_to_push[module_name] = {
+                'last_checksum': checksum,
+            }
+        with open(check_sum_addon_path_file_path, 'w') as f:
+            f.write(json.dumps(data_to_push))
+    else:
+        with open(check_sum_addon_path_file_path, 'r') as f:
+            checksum_file_data = json.loads(f.read())
+        for module_name, current_checksum in module_check_sum.items():
+            if checksum_file_data[module_name]['last_checksum'] != current_checksum:
+                modules_changed.append(module_name)
+            checksum_file_data[module_name]['last_checksum'] = current_checksum
+
+        with open(check_sum_addon_path_file_path, 'w') as f:
+            f.write(json.dumps(checksum_file_data))
+
+        if modules_changed:
+            now_str = fields.Datetime.now().strftime('%Y_%m_%d_%H_%M_%S')
+            modules_changed_file_path = os.path.join(saas_datadir, f'modules_changed_{now_str}.json')
+            with open(modules_changed_file_path, 'w') as f:
+                f.write(json.dumps(modules_changed))
+            _logger.info(
+                f'Found {len(modules_changed)} modules has changed the source code: \n'
+                f'{modules_changed}'
+            )
+        else:
+            _logger.info('No modules have been found to have changed the source code')
+
+
+def _check_and_upgrade_modules():
+    time.sleep(1)
+    url = f'http://localhost:{config.get("http_port")}/check_and_upgrade_module'
+    res = requests.get(url, verify=False)
+
+def _thread_check_and_upgrade_modules():
+    import threading
+    t = threading.Thread(target=_check_and_upgrade_modules)
+    t.start()
+
+_scan_modules_file_change()
+_thread_check_and_upgrade_modules()
