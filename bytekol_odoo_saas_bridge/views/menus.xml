@@ -1,0 +1,7 @@
+<odoo>
+    <menuitem id="menu_saas_client_root" parent="base.menu_ir_property" groups="base.group_system"
+        name="SaaS Client"
+    >
+        <menuitem id="menu_simple_queue_job" action="bytekol_odoo_saas_bridge.simple_queue_job_act_window" />
+    </menuitem>
+</odoo>
