@@ -57,20 +57,25 @@ class AutoUpgradeController(Controller):
                         ('name', 'in', list(modules_changed_set))
                     ])
                     odoo_modules_name = odoo_modules.mapped('name')
-                    _logger.info(f'Modules to auto upgrade: {odoo_modules.mapped("name")}')
                     if odoo_modules:
+                        _logger.info(f'Modules to auto upgrade: {odoo_modules.mapped("name")}')
                         odoo_modules.with_context(prefetch_fields=False).button_immediate_upgrade()
-                    print(f'Upgraded Modules: {odoo_modules.mapped('name')}')
+                        print(f'Upgraded Modules: {odoo_modules.mapped('name')}')
+                    else:
+                        msg = f'No module found to upgrade for db: {dbname}'
+                        _logger.info(msg)
+                        print(msg)
+                        continue
                 except Exception as e:
                     is_success = False
                     _logger.error(str(e), exc_info=e)
                     if env:
                         env.cr.rollback()
-                finally:
-                    duration = format_duration(time.time() - start)
-                    self._notify_auto_upgrade_modules(
-                        env, odoo_modules_name, is_success, dbname, duration
-                    )
+
+                duration = format_duration(time.time() - start)
+                self._notify_auto_upgrade_modules(
+                    env, odoo_modules_name, is_success, dbname, duration
+                )
         for file in file_to_delete:
             os.remove(file)
 
