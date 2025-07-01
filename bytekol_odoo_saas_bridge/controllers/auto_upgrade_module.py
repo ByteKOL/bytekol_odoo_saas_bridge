@@ -72,7 +72,7 @@ class AutoUpgradeController(Controller):
                     if env:
                         env.cr.rollback()
 
-                duration = format_duration(time.time() - start)
+                duration = format_duration((time.time() - start) /60)
                 self._notify_auto_upgrade_modules(
                     env, odoo_modules_name, is_success, dbname, duration
                 )
