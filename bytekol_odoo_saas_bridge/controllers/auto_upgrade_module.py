@@ -1,4 +1,5 @@
 import time
+import uuid
 
 import werkzeug
 import os
@@ -12,6 +13,9 @@ from odoo.modules.registry import Registry
 from odoo.service import db
 from odoo.tools import config, format_duration
 from odoo.http import request, route, Controller
+
+from .. import utils
+
 saas_datadir = os.path.join(config.get('data_dir'), 'saas_data')
 
 class AutoUpgradeController(Controller):
@@ -51,6 +55,7 @@ class AutoUpgradeController(Controller):
             registry = Registry(dbname)
             with registry.cursor() as cr:
                 env = odoo.api.Environment(cr, odoo.SUPERUSER_ID, {'active_test': False})
+                head_log_code = uuid.uuid4().hex
                 try:
                     odoo_modules = env['ir.module.module'].search([
                         ('state', '=', 'installed'),
@@ -58,7 +63,7 @@ class AutoUpgradeController(Controller):
                     ])
                     odoo_modules_name = odoo_modules.mapped('name')
                     if odoo_modules:
-                        _logger.info(f'Modules to auto upgrade: {odoo_modules.mapped("name")}')
+                        _logger.info(f'Modules to auto upgrade: {odoo_modules.mapped("name")} | {head_log_code}')
                         odoo_modules.with_context(prefetch_fields=False).button_immediate_upgrade()
                         print(f'Upgraded Modules: {odoo_modules.mapped('name')}')
                     else:
@@ -72,15 +77,27 @@ class AutoUpgradeController(Controller):
                     if env:
                         env.cr.rollback()
 
+                tail_log_code = uuid.uuid4().hex
+                _logger.info(f'Auto-upgraded modules on database {dbname} done | {tail_log_code}')
+
+                log_file_path = config.get('logfile')
+                upgrade_modules_log = ''
+                if log_file_path:
+                    upgrade_modules_log = utils.extract_log_block(
+                        log_file_path, head_log_code, tail_log_code,
+                    )
+
                 duration = format_duration((time.time() - start) /60)
                 self._notify_auto_upgrade_modules(
-                    env, odoo_modules_name, is_success, dbname, duration
+                    env, odoo_modules_name, is_success, dbname, duration,
+                    upgrade_modules_log=upgrade_modules_log
                 )
         for file in file_to_delete:
             os.remove(file)
 
     def _notify_auto_upgrade_modules(
-        self, env, module_upgrade: list[str], is_success: bool, db_name: str, duration: str
+        self, env, module_upgrade: list[str], is_success: bool, db_name: str, duration: str,
+        upgrade_modules_log: str=''
     ):
         if not config.get('saas_url'):
             return
@@ -88,6 +105,6 @@ class AutoUpgradeController(Controller):
             'name': 'Notify Auto Upgrade Modules Status',
             'model': 'saas.client',
             'method': '_notify_upgrade_module',
-            'method_args': [module_upgrade, is_success, duration, db_name],
+            'method_args': [module_upgrade, is_success, duration, db_name, upgrade_modules_log],
         })
         queue._thread_execute_job()
