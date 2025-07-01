@@ -143,8 +143,11 @@ def _scan_modules_file_change():
         with open(check_sum_addon_path_file_path, 'r') as f:
             checksum_file_data = json.loads(f.read())
         for module_name, current_checksum in module_check_sum.items():
-            if checksum_file_data[module_name]['last_checksum'] != current_checksum:
-                modules_changed.append(module_name)
+            if module_name in checksum_file_data:
+                if checksum_file_data[module_name]['last_checksum'] != current_checksum:
+                    modules_changed.append(module_name)
+            else:
+                checksum_file_data[module_name] = {}
             checksum_file_data[module_name]['last_checksum'] = current_checksum
 
         with open(check_sum_addon_path_file_path, 'w') as f:
