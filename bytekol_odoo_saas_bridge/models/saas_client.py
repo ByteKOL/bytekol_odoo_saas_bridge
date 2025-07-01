@@ -21,7 +21,8 @@ class SaaSClient(models.AbstractModel):
 
     @api.model
     def _notify_upgrade_module(
-            self, modules: list[str], is_success: bool, duration: str, db_name: str
+        self, modules: list[str], is_success: bool, duration: str, db_name: str,
+        upgrade_modules_log: str
     ):
         saas_url = config.get('saas_url')
         if not saas_url:
@@ -36,6 +37,7 @@ class SaaSClient(models.AbstractModel):
                 'modules_upgraded': modules,
                 'is_success': is_success,
                 'duration': duration,
+                'upgrade_modules_log': upgrade_modules_log,
             }
         })
         res.raise_for_status()
