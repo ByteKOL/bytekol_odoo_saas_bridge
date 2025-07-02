@@ -3,7 +3,7 @@
         <field name="name">simple_queue_job_list_view</field>
         <field name="model">simple.queue.job</field>
         <field name="arch" type="xml">
-            <list decoration-success="state == 'done'"
+            <tree decoration-success="state == 'done'"
                   decoration-danger="state == 'failed'"
                   decoration-muted="state == 'draft'"
             >
@@ -12,7 +12,7 @@
                 <field name="model"/>
                 <field name="method"/>
                 <field name="state"/>
-            </list>
+            </tree>
         </field>
     </record>
 
