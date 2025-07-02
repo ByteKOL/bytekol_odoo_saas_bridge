@@ -65,7 +65,7 @@ class AutoUpgradeController(Controller):
                     if odoo_modules:
                         _logger.info(f'Modules to auto upgrade: {odoo_modules.mapped("name")} | {head_log_code}')
                         odoo_modules.with_context(prefetch_fields=False).button_immediate_upgrade()
-                        print(f'Upgraded Modules: {odoo_modules.mapped('name')}')
+                        print(f'Upgraded Modules: {odoo_modules.mapped("name")}')
                     else:
                         msg = f'No module found to upgrade for db: {dbname}'
                         _logger.info(msg)
