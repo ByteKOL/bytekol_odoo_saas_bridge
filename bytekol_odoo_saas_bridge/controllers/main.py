@@ -36,7 +36,7 @@ class Main(Controller):
     def saas_bridge_user_login(self, **kwargs):
         user = request.env['res.users'].browse(int(kwargs['user_id']))
         uid = request.session.uid = int(kwargs['user_id'])
-        request.env.registry.clear_cache()
+        request.env.registry.clear_caches()
         request.session.session_token = security.compute_session_token(request.session, request.env)
         if user.sudo().has_group('base.group_portal'):
             return request.redirect('/')

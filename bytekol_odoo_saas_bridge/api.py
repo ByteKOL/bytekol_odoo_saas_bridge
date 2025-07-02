@@ -54,7 +54,7 @@ def bk_api(purpose='api_general', log_traceback=True, custom_response=False, tok
 
                 bk_token = request.env['bk.token'].sudo().ensure_token_valid(token, purpose)
                 request.update_env(user=bk_token.user_id.id)
-                request.env.registry.clear_cache()
+                request.env.registry.clear_caches()
                 if api_kwargs.get('one_time_token'):
                     bk_token.sudo().unlink()
 
