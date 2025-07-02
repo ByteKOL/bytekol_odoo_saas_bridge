@@ -12,7 +12,7 @@ class BKToken(models.Model):
     _order = 'id desc'
 
     name = fields.Char(required=True)
-    token = fields.Char(required=True, readonly=True, default=str(uuid.uuid4()), copy=False)
+    token = fields.Char(required=True, readonly=True, default=lambda self: str(uuid.uuid4()), copy=False)
     user_id = fields.Many2one('res.users', string='User', default=lambda self: self.env.user)
     live_time = fields.Float(help="Live time (seconds) since creation date of token, "
                                   "If value <= 0 then effect is permanent.", default=0)
