@@ -10,7 +10,7 @@ import requests
 
 import odoo
 from odoo.exceptions import UserError
-from odoo.http import request, Response as OdooResponse
+from odoo.http import request, Response as OdooResponse, _Response as _OdooResponse
 _logger = logging.getLogger(__name__)
 
 
@@ -66,7 +66,7 @@ def bk_api(purpose='api_general', log_traceback=True, custom_response=False, tok
                     return res
                 if isinstance(res, (int, dict, float, list, str, type(None))):
                     response_data['data'] = res
-                elif isinstance(res, OdooResponse):
+                elif isinstance(res, (OdooResponse, _OdooResponse)):
                     try:
                         response_data['data'] = json.loads(res.data)
                     except Exception:
