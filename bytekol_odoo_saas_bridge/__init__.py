@@ -168,7 +168,8 @@ def _scan_modules_file_change():
 
 def _check_and_upgrade_modules():
     # need to wait for a while ~ 60s (wait for db to initialize and install first time), only 16.0 (not 17.0 and 18.0)
-    time.sleep(60)
+    waiting_second = int(config.get('ft_auto_upgrade_module_waiting_second', 1))
+    time.sleep(waiting_second)
     url = f'http://localhost:{config.get("http_port")}/check_and_upgrade_module'
     res = requests.get(url, verify=False)
 
