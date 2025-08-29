@@ -1,0 +1,37 @@
+<odoo>
+    <template id="demo_ribbon_on_website" inherit_id="website.layout" name="Website Demo Ribbon">
+        <xpath expr="//header" position="after">
+            <div t-if="request.env['odoo.saas.client.data'].is_staging">
+                <style>
+                    .o_demo_ribbon {
+                        position: fixed;
+                        /* Adjust top and right to position the ribbon more centrally in the corner */
+                        top: 30px; /* Moved slightly down from the very top */
+                        right: -70px; /* Moved further to the right to make it extend more */
+                        transform: rotate(45deg); /* Rotate the ribbon 45 degrees */
+                        background-color: #bbbb10; /* Red color, similar to the original image */
+                        color: white;
+                        /* Increased padding and font-size for a larger, bolder look */
+                        padding: 8px 90px; /* Increased vertical and horizontal padding */
+                        font-weight: bold;
+                        font-size: 20px; /* Larger font size */
+                        text-align: center;
+                        text-transform: uppercase;
+                        z-index: 9999; /* Ensure the ribbon is on top of other elements */
+                        opacity: 0.6; /* Slightly less opaque for better visibility while still being "faded" */
+                        /* Added some box-shadow for a subtle depth effect */
+                        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+                        letter-spacing: 2px; /* Add some letter spacing for better readability */
+                    }
+
+                    .o_demo_ribbon p {
+                        margin: 0;
+                    }
+                </style>
+                <div class="o_demo_ribbon d-print-none">
+                    <p>DEMO</p>
+                </div>
+            </div>
+        </xpath>
+    </template>
+</odoo>
