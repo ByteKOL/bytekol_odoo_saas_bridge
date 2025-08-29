@@ -106,3 +106,7 @@ class OdooSaaSClientData(models.AbstractModel):
             'target': 'new',
             'context': {'body': html}
         }
+
+    @property
+    def is_staging(self):
+        return self.get_client_data_dict().get('staging_info', {}).get('is_staging')
