@@ -55,7 +55,7 @@
                 <field name="method"/>
                 <field name="create_date"/>
 
-                <group string="Group By" expand="0">
+                <group >
                     <filter name="group_by_state" string="Status" context="{'group_by': 'state'}"/>
                     <filter name="group_by_name" string="Name" context="{'group_by': 'name'}"/>
                     <filter name="group_by_model" string="Model" context="{'group_by': 'model'}"/>

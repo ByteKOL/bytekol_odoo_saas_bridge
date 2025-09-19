@@ -54,7 +54,7 @@
                 <filter name="ftr_inactive" string="Archived" domain="[('active', '=', False)]"/>
                 <separator/>
 
-                <group string="Group By">
+                <group>
                     <filter string="User Trigger" name="grp_user_trigger" context="{'group_by': 'user_trigger_id'}"/>
                 </group>
             </search>

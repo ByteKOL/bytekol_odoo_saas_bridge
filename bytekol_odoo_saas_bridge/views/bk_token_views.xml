@@ -65,7 +65,7 @@
                 <filter name="filter_alive" string="Alive" domain="[('is_expire', '=', False)]"/>
                 <separator/>
 
-                <group string="Group By">
+                <group>
                     <filter string="User" name="grb_user" context="{'group_by': 'user_id'}"/>
                     <filter string="Is Expire" name="grb_is_expire" context="{'group_by': 'is_expire'}"/>
                 </group>

@@ -53,7 +53,7 @@ class Main(Controller):
             return request.redirect('/web/login')
 
     @api.verify_admin_password
-    @route('/reload_registry', type='json', auth='none', methods=['POST', 'GET'])
+    @route('/reload_registry', type='jsonrpc', auth='none', methods=['POST', 'GET'])
     def reload_registry(self):
         json_data = request.get_json_data()
         db_name = json_data.get('db_name')

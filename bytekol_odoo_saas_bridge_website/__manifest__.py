@@ -3,6 +3,7 @@
     'description': "SaaS Bridge - Website",
     'version': '1.0.0',
     'category': "Tools",
+    'author': 'Bytekol',
     'depends': ['website', 'bytekol_odoo_saas_bridge'],
     'data': [
         'website_templates/website.xml',

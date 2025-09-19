@@ -4,6 +4,7 @@ import logging
 import requests
 import time
 
+from odoo.tools.config import _FileOnlyOption, _OdooOption
 from . import models
 from . import controllers
 
@@ -18,7 +19,7 @@ if not os.path.exists(saas_datadir):
 
 _logger = logging.getLogger(__name__)
 
-if 'bytekol_odoo_saas_bridge' not in odoo.tools.config.get('server_wide_modules', '').split(','):
+if 'bytekol_odoo_saas_bridge' not in odoo.tools.config.get('server_wide_modules', []):
     _logger.error('module bytekol_odoo_saas_bridge must be loaded in server_wide_modules')
 
 from odoo.service.server import ThreadedServer
@@ -34,7 +35,6 @@ def process_limit_patch(self):
     from odoo.tools import config
     import threading
     import time
-    from .custom_config import custom_config
 
     memory = memory_info(psutil.Process(os.getpid()))
     if config['limit_memory_soft'] and memory > config['limit_memory_soft']:
@@ -57,7 +57,7 @@ def process_limit_patch(self):
                         'Thread %s virtual real time limit (%d/%ds) reached.',
                         thread, thread_execution_time, thread_limit_time_real)
 
-                    saas_url = custom_config.get('options', 'saas_url', fallback=None)
+                    saas_url = config.get('saas_url', '')
                     if saas_url:
                         import uuid
                         error_log_code = uuid.uuid4().hex
@@ -66,7 +66,7 @@ def process_limit_patch(self):
                         try:
                             requests.post(f'{saas_url}/container_thread_limit_time_real_handler', json={
                                 'admin_password': config.get("admin_passwd"),
-                                'saas_container_id': custom_config.get('options', 'saas_container_id', fallback=None),
+                                'saas_container_id': config.get('saas_container_id', False),
                                 'error_log_code': error_log_code,
                                 'thread_execution_time': thread_execution_time,
                                 'thread_limit_time_real': thread_limit_time_real
@@ -116,7 +116,7 @@ def _scan_modules_file_change():
                     continue
         return h.hexdigest()
 
-    addon_paths = [dir_path for dir_path in config.get('addons_path').split(',') if dir_path]
+    addon_paths = config.get('addons_path', [])
     module_check_sum = dict()
 
     for dir_path in addon_paths:

@@ -21,5 +21,5 @@ def db_filter(dbs, host=None):
 
 http.db_filter = db_filter
 
-if 'bytekol_db_filter' not in odoo.tools.config.get('server_wide_modules', '').split(','):
+if 'bytekol_db_filter' not in odoo.tools.config.get('server_wide_modules', []):
     _logger.error('module bytekol_db_filter must be loaded in server_wide_modules')

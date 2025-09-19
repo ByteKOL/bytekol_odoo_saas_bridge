@@ -3,6 +3,7 @@
     'description': "SaaS Bridge",
     'version': '1.0.0',
     'category': "Tools",
+    'author': 'Bytekol',
     'depends': ['web'],
     'data': [
         'security/ir.model.access.csv',
