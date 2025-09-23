@@ -29,9 +29,7 @@ class BKToken(models.Model):
         ('clean_when_expired', 'Clean when expired')
     ], default='clean_when_expired')
 
-    _sql_constraints = [
-        ('unique_token', 'UNIQUE(token)', 'Token must be unique.'),
-    ]
+    _unique_token = models.Constraint('UNIQUE(token)', 'Token must be unique.')
 
     def _compute_is_expire(self):
         for r in self:

@@ -11,7 +11,7 @@ _logger = logging.getLogger(__name__)
 import odoo
 from odoo.modules.registry import Registry
 from odoo.service import db
-from odoo.tools import config, format_duration
+from odoo.tools import config, format_duration, str2bool
 from odoo.http import request, route, Controller
 
 from .. import utils
@@ -23,7 +23,7 @@ class AutoUpgradeController(Controller):
     @route('/check_and_upgrade_module', methods=['GET'], auth='none')
     def check_and_upgrade_modules(self):
         env = None
-        if config.get('disable_auto_upgrade_modules'):
+        if str2bool(config.get('disable_auto_upgrade_modules')):
             _logger.info(
                 f'Do not automatically upgrade modules because odoo config: disable_auto_upgrade_modules=True'
             )
