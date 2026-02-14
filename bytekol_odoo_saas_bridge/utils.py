@@ -1,3 +1,6 @@
+import time
+
+
 def read_lines_backwards(file_path, chunk_size=8192):
     with open(file_path, 'r', encoding='utf-8') as f:
         f.seek(0, 2)  # Move the cursor to the end of the file
@@ -46,3 +49,6 @@ def extract_log_block(log_path, head_log_code, tail_log_code, max_lines=5000):
     lines.reverse()
     # Join the lines into a single string and return
     return ''.join(lines)
+
+def format_duration_time(start_time: float, end_time: float):
+    return time.strftime('%H:%M:%S', time.gmtime(end_time - start_time))
