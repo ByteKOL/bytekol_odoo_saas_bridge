@@ -11,26 +11,40 @@ _logger = logging.getLogger(__name__)
 import odoo
 from odoo.modules.registry import Registry
 from odoo.service import db
-from odoo.tools import config, format_duration
+from odoo.tools import config
 from odoo.http import request, route, Controller
 
 from .. import utils
 
 saas_datadir = os.path.join(config.get('data_dir'), 'saas_data')
 
+
 class AutoUpgradeController(Controller):
 
     @route('/check_and_upgrade_module', methods=['GET'], auth='none')
     def check_and_upgrade_modules(self):
         env = None
+        msg_done = 'check_and_upgrade_module_done'
         if config.get('disable_auto_upgrade_modules'):
             _logger.info(
-                f'Do not automatically upgrade modules because odoo config: disable_auto_upgrade_modules=True'
+                f'Do not automatically upgrade modules because odoo config: disable_auto_upgrade_modules=True.\n'
+                f'{msg_done}'
             )
             return
         if not os.path.exists(saas_datadir):
-            _logger.info(f'saas_datadir: {saas_datadir} does not exist, ignore auto upgrade module')
+            _logger.info(f'saas_datadir: {saas_datadir} does not exist, ignore auto upgrade module.\n'
+                         f'{msg_done}')
             return
+        # saas_url = config.get('saas_url')
+        # saas_container_id = config.get('saas_container_id')
+
+        option_skip_auto_upgrade_module_file_path = '/tmp/skip_auto_upgrade_module'
+        if os.path.exists(option_skip_auto_upgrade_module_file_path):
+            _logger.info(f'Skip auto-upgrade modules, because file: {option_skip_auto_upgrade_module_file_path} is existed.')
+            os.remove(option_skip_auto_upgrade_module_file_path)
+            _logger.info(msg_done)
+            return
+
         host_url = request.httprequest.host_url.strip()
         if not host_url.startswith('http://localhost'):
             raise werkzeug.exceptions.Forbidden()
@@ -48,10 +62,13 @@ class AutoUpgradeController(Controller):
                     modules_list = json.loads(f.read())
                     modules_changed_set.update(modules_list)
 
+        if not modules_changed_set:
+            _logger.info(f'No modules changed found, skip upgrading odoo modules.')
+            _logger.info(msg_done)
+            return
+
         for dbname in available_dbs:
-            start = time.time()
-            is_success = True
-            odoo_modules_name = []
+            start_time = time.time()
             registry = Registry(dbname)
             with registry.cursor() as cr:
                 env = odoo.api.Environment(cr, odoo.SUPERUSER_ID, {'active_test': False})
@@ -61,50 +78,24 @@ class AutoUpgradeController(Controller):
                         ('state', '=', 'installed'),
                         ('name', 'in', list(modules_changed_set))
                     ])
-                    odoo_modules_name = odoo_modules.mapped('name')
                     if odoo_modules:
-                        _logger.info(f'Modules to auto upgrade: {odoo_modules.mapped("name")} | {head_log_code}')
+                        _logger.info(f'Starting upgrade modules on database: {dbname}.\n'+
+                                     f'Modules to auto upgrade: {odoo_modules.mapped("name")} | {head_log_code}')
                         odoo_modules.with_context(prefetch_fields=False).button_immediate_upgrade()
-                        print(f'Upgraded Modules: {odoo_modules.mapped("name")}')
                     else:
                         msg = f'No module found to upgrade for db: {dbname}'
                         _logger.info(msg)
-                        print(msg)
                         continue
                 except Exception as e:
-                    is_success = False
                     _logger.error(str(e), exc_info=e)
                     if env:
                         env.cr.rollback()
 
+                duration = utils.format_duration_time(start_time, time.time())
                 tail_log_code = uuid.uuid4().hex
-                _logger.info(f'Auto-upgraded modules on database {dbname} done | {tail_log_code}')
-
-                log_file_path = config.get('logfile')
-                upgrade_modules_log = ''
-                if log_file_path:
-                    upgrade_modules_log = utils.extract_log_block(
-                        log_file_path, head_log_code, tail_log_code,
-                    )
-
-                duration = format_duration((time.time() - start) /60)
-                self._notify_auto_upgrade_modules(
-                    env, odoo_modules_name, is_success, dbname, duration,
-                    upgrade_modules_log=upgrade_modules_log
-                )
+                _logger.info(f'Auto-upgraded modules on database {dbname} done, duration: {duration} | {tail_log_code}\n'+
+                             f'--------------------------------------------------------------------')
+                # don't need to notify anymore, because saas already view logs when restarting.
         for file in file_to_delete:
             os.remove(file)
-
-    def _notify_auto_upgrade_modules(
-        self, env, module_upgrade: list[str], is_success: bool, db_name: str, duration: str,
-        upgrade_modules_log: str=''
-    ):
-        if not config.get('saas_url'):
-            return
-        queue = env['simple.queue.job']._create_job({
-            'name': 'Notify Auto Upgrade Modules Status',
-            'model': 'saas.client',
-            'method': '_notify_upgrade_module',
-            'method_args': [module_upgrade, is_success, duration, db_name, upgrade_modules_log],
-        })
-        queue._thread_execute_job()
+        _logger.info(msg_done)
