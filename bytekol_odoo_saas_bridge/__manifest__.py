@@ -1,7 +1,7 @@
 {
     'name': 'SaaS Bridge',
     'description': "SaaS Bridge",
-    'version': '1.0.0',
+    'version': '1.0.1',
     'category': "Tools",
     'author': 'Bytekol',
     'depends': ['web'],

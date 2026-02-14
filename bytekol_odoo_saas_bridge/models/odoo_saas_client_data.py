@@ -33,9 +33,9 @@ class OdooSaaSClientData(models.AbstractModel):
                 with open(file_path, 'r', encoding='utf-8') as f:
                     return json.loads(f.read())
             else:
-                _logger.error(f'get_client_data_dict failed, file: {file_path} does not exist')
+                _logger.info(f'get_client_data_dict failed, file: {file_path} does not exist')
         else:
-            _logger.error('get_client_data_dict failed, table odoo_saas_client_data does not exist')
+            _logger.info('get_client_data_dict failed, table odoo_saas_client_data does not exist')
         return {}
 
     @property
