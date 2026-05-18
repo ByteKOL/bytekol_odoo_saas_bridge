@@ -12,6 +12,9 @@ import odoo
 from odoo.tools import config
 from odoo import fields
 
+from odoo.addons.bytekol_odoo_saas_bridge.utils import Ansi
+
+
 saas_datadir = os.path.join(config.get('data_dir'), 'saas_data')
 if not os.path.exists(saas_datadir):
     os.mkdir(saas_datadir)
@@ -54,8 +57,8 @@ def process_limit_patch(self):
                     thread_limit_time_real = config['limit_time_real_cron']
                 if thread_limit_time_real and thread_execution_time > thread_limit_time_real:
                     _logger.warning(
-                        'Thread %s virtual real time limit (%d/%ds) reached.',
-                        thread, thread_execution_time, thread_limit_time_real)
+                        'Thread %s virtual real time limit (%d/%ds) reached. req_path: %s',
+                        thread, thread_execution_time, thread_limit_time_real, getattr(thread, '_req_path', None))
 
                     saas_url = custom_config.get('options', 'saas_url', fallback=None)
                     if saas_url:
@@ -167,9 +170,15 @@ def _scan_modules_file_change():
 
 
 def _check_and_upgrade_modules():
+    if not config['http_enable']:
+        _logger.info(Ansi.title_hot_pink('http is not enable, ignore auto _check_and_upgrade_modules'))
+        return
     time.sleep(1)
-    url = f'http://localhost:{config.get("http_port")}/check_and_upgrade_module'
-    res = requests.get(url, verify=False)
+    try:
+        url = f'http://127.0.0.1:{config.get("http_port")}/check_and_upgrade_module'
+        res = requests.get(url, verify=False)
+    except Exception as e:
+        _logger.error(f'Cannot call check_and_upgrade_module, detail: {str(e)}')
 
 def _thread_check_and_upgrade_modules():
     import threading
