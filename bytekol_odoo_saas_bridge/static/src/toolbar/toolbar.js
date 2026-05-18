@@ -1,14 +1,15 @@
 /**@odoo-module**/
 
 import { isMobileOS } from '@web/core/browser/feature_detection';
-import {renderToElement} from '@web/core/utils/render';
-import {Component} from '@odoo/owl';
+// import {renderToElement} from '@web/core/utils/render';
+const { Component } = owl;
 import {registry} from '@web/core/registry';
 import {useService} from '@web/core/utils/hooks';
 import {session} from '@web/session';
 import {CustomAlertDialog} from "../dialogs/custom_alert_dialog";
 import {_t} from "@web/core/l10n/translation";
-import {markup} from "@odoo/owl";
+import { Markup } from 'web.utils';
+
 
 
 export class StagingInfo extends Component {
@@ -31,7 +32,7 @@ We have disabled Scheduled Actions, Email servers and update robots.txt to preve
         `)
         this.dialog.add(CustomAlertDialog, {
             title: _t("Staging Info"),
-            body: markup(body)
+            body: Markup(body)
         })
     }
 
