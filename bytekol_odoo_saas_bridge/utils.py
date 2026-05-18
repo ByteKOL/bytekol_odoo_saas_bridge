@@ -52,3 +52,18 @@ def extract_log_block(log_path, head_log_code, tail_log_code, max_lines=5000):
 
 def format_duration_time(start_time: float, end_time: float):
     return time.strftime('%H:%M:%S', time.gmtime(end_time - start_time))
+
+
+class Ansi:
+
+    @classmethod
+    def title_hot_pink(cls, txt: str):
+        return f'\033[1;38;2;255;105;180m{txt}\033[0m'
+
+    @classmethod
+    def title_sky_blue(cls, txt: str):
+        return f'\033[1;38;2;135;206;235m{txt}\033[0m'
+
+    @classmethod
+    def title_violet(cls, txt: str):
+        return f'\033[1;38;2;121;0;168m{txt}\033[0m'
