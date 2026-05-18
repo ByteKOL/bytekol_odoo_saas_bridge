@@ -36,9 +36,9 @@ class Main(Controller):
     def saas_bridge_user_login(self, **kwargs):
         user = request.env['res.users'].browse(int(kwargs['user_id']))
         uid = request.session.uid = int(kwargs['user_id'])
-        request.env.registry.clear_cache()
+        request.env.registry.clear_caches()
         request.session.session_token = security.compute_session_token(request.session, request.env)
-        if user.sudo().has_groups('base.group_portal'):
+        if user.sudo().has_group('base.group_portal'):
             return request.redirect('/')
         return request.redirect(_get_login_redirect_url(uid))
 
@@ -110,7 +110,7 @@ class Main(Controller):
     @api.bk_api('odoo_saas_api', one_time_token=True)
     @route('/saas_create_user', type='http', methods=['POST'], auth='public', csrf=False)
     def create_user(self):
-        data = request.get_json_data()
+        data = json.loads(request.httprequest.get_data(as_text=True) or '{}')
         user = request.env['res.users'].sudo().create({
             'name': data['name'],
             'login': data['login'],
@@ -122,7 +122,7 @@ class Main(Controller):
     @api.bk_api('odoo_saas_api', one_time_token=True)
     @route('/saas_bridge_rpc', type='http', methods=['POST'], auth='public', csrf=False)
     def saas_bridge_rpc(self):
-        data = request.get_json_data()
+        data = json.loads(request.httprequest.get_data(as_text=True) or '{}')
         required_keys = ['model', 'method', 'record_ids']
         for key in required_keys:
             if key not in data:
@@ -149,7 +149,7 @@ class Main(Controller):
     @api.bk_api('odoo_saas_api', one_time_token=True)
     @route('/saas_bride_exec_code', type='http', methods=['POST'], auth='public', csrf=False)
     def saas_bride_exec_code(self):
-        data = request.get_json_data()
+        data = json.loads(request.httprequest.get_data(as_text=True) or '{}')
         cron = request.env['ir.cron'].create({
             'name': f'SaaS Bridge Exec code, time: {odoo.fields.Datetime.now()}',
             'code': data['code'],
