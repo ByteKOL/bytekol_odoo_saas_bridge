@@ -107,6 +107,7 @@ class Main(Controller):
     def update_app_list(self):
         request.env['ir.module.module'].sudo().update_list()
 
+    # TODO: remove, replace by saas_bridge_rpc
     @api.bk_api('odoo_saas_api', one_time_token=True)
     @route('/bk_saas_rpc', type='json', auth='public', methods=['POST'], csrf=False)
     def rpc_call(self, **kwargs):
@@ -122,6 +123,7 @@ class Main(Controller):
             'result': result,
         }
 
+    @api.bk_api('odoo_saas_api', one_time_token=True)
     @route('/saas_create_user', type='http', methods=['POST'], auth='public', csrf=False)
     def create_user(self):
         data = request.get_json_data()

@@ -7,7 +7,6 @@ const {xml} = owl;
 export class OdooSaaSErrorDialog extends Dialog {
     setup() {
         super.setup();
-        super.setup();
         this.title = this.env._t("Resource Limit Alert");
         const { data, message } = this.props;
         if (data && data.arguments && data.arguments.length > 0) {

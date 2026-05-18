@@ -68,7 +68,7 @@
     <record model="ir.actions.act_window" id="simple_queue_job_act_window">
         <field name="name">Simple Queue Job</field>
         <field name="res_model">simple.queue.job</field>
-        <field name="view_mode">list,form</field>
+        <field name="view_mode">tree,form</field>
     </record>
 
 </odoo>
