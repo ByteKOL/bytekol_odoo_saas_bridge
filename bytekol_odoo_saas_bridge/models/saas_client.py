@@ -2,6 +2,7 @@ import logging
 from concurrent import futures
 from contextlib import contextmanager
 from functools import wraps
+from typing import List
 
 import requests
 
@@ -21,7 +22,7 @@ class SaaSClient(models.AbstractModel):
 
     @api.model
     def _notify_upgrade_module(
-        self, modules: list[str], is_success: bool, duration: str, db_name: str,
+        self, modules: List[str], is_success: bool, duration: str, db_name: str,
         upgrade_modules_log: str
     ):
         saas_url = config.get('saas_url')

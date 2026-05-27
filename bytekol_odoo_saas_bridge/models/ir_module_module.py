@@ -1,3 +1,5 @@
+from markupsafe import Markup
+
 from odoo import models, _
 from odoo.addons.bytekol_odoo_saas_bridge.exceptions import OdooSaaSClientResourceException
 from odoo.exceptions import UserError
@@ -55,7 +57,7 @@ class IrModule(models.Model):
 
             client_data = self.env['odoo.saas.client.data']
             for banned_module in client_data.exclusion_module_name:
-                if banned_module.strip() in to_install:
+                if banned_module.strip() in to_install_modules_name:
                     message = _(
                         'The "%s" plan you are using does not allow installation of module %s, '
                         'please upgrade to another plan to be able to install it.<br>'
@@ -63,7 +65,7 @@ class IrModule(models.Model):
                         '<a href="%s" target="_blank">%s</a>'
                         % (client_data.plan_name, banned_module, client_data.pricing_url, client_data.pricing_url)
                     )
-                    raise OdooSaaSClientResourceException(message)
+                    raise OdooSaaSClientResourceException(Markup(message))
             cr.rollback()
         self = self.with_env(self.env(cr=old_cr))
         return super(IrModule, self).button_immediate_install()

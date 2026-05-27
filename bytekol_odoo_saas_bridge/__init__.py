@@ -45,10 +45,9 @@ def process_limit_patch(self):
         self.limits_reached_threads.add(threading.current_thread())
 
     for thread in threading.enumerate():
-        thread_type = getattr(thread, 'type', None)
-        if not thread.daemon and thread_type != 'websocket' or thread_type == 'cron':
+        if not thread.daemon or getattr(thread, 'type', None) == 'cron':
             # We apply the limits on cron threads and HTTP requests,
-            # websocket requests excluded.
+            # longpolling requests excluded.
             if getattr(thread, 'start_time', None):
                 thread_execution_time = time.time() - thread.start_time
                 thread_limit_time_real = config['limit_time_real']

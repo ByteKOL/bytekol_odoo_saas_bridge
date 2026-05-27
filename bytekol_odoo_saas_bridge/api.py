@@ -136,6 +136,7 @@ def verify_admin_password(func):
         if not passwd_valid:
             response = OdooResponse(headers=[('Content-Type', 'application/json')], status=403)
             response.data = json.dumps({'error': 'admin_password invalid'})
+            return response
 
         return func(*args, **kwargs)
     return wrapper
