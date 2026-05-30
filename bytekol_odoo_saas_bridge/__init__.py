@@ -133,7 +133,11 @@ def _scan_modules_file_change():
     modules_changed = []
 
     check_sum_addon_path_file_path = os.path.join(saas_datadir, 'checksum_addon_path.json')
-    if not os.path.exists(check_sum_addon_path_file_path):
+    if os.path.isfile(check_sum_addon_path_file_path):
+        with open(check_sum_addon_path_file_path, 'r') as f:
+            checksum_file_txt = f.read()
+
+    if not os.path.exists(check_sum_addon_path_file_path) or not checksum_file_txt.strip():
         data_to_push = {}
         for module_name, checksum in module_check_sum.items():
             data_to_push[module_name] = {
@@ -142,8 +146,7 @@ def _scan_modules_file_change():
         with open(check_sum_addon_path_file_path, 'w') as f:
             f.write(json.dumps(data_to_push))
     else:
-        with open(check_sum_addon_path_file_path, 'r') as f:
-            checksum_file_data = json.loads(f.read())
+        checksum_file_data = json.loads(checksum_file_txt)
         for module_name, current_checksum in module_check_sum.items():
             if module_name in checksum_file_data:
                 if checksum_file_data[module_name]['last_checksum'] != current_checksum:
