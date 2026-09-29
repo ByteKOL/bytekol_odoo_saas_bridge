@@ -5,5 +5,6 @@ from . import res_company
 from . import bk_token
 from . import bk_traceback_log
 from . import ir_http
+from . import ir_config_parameter
 from . import simple_queue_job
 from . import saas_client

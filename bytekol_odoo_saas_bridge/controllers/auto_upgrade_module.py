@@ -10,9 +10,10 @@ _logger = logging.getLogger(__name__)
 
 import odoo
 from odoo.modules.registry import Registry
-from odoo.service import db
+from odoo.modules import db
 from odoo.tools import config
 from odoo.http import request, route, Controller
+from odoo.addons.web.controllers.database import list_db_incompatible
 
 from .. import utils
 from ..utils import Ansi
@@ -64,7 +65,7 @@ class AutoUpgradeController(Controller):
             raise werkzeug.exceptions.Forbidden()
 
         dbs = db.list_dbs(force=True)
-        available_dbs = set(dbs) - set(db.list_db_incompatible(dbs))
+        available_dbs = set(dbs) - set(list_db_incompatible(dbs))
 
         modules_changed_set = set()
         file_to_delete = set()

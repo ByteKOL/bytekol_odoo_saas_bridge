@@ -6,8 +6,7 @@
     'author': 'Bytekol',
     'depends': ['web'],
     'data': [
-        'security/ir.model.access.csv',
-        'security/security.xml',
+        'security/ir.access.csv',
         'views/bk_token_views.xml',
         'views/bk_traceback_log_views.xml',
         'views/simple_queue_job_views.xml',

@@ -13,9 +13,10 @@ from odoo import _
 from odoo.addons.bytekol_odoo_saas_bridge import api
 from odoo.addons.bytekol_odoo_saas_bridge.db import dump_db
 from odoo.exceptions import AccessDenied, UserError
-from odoo.http import route, request, Controller, content_disposition
+from odoo.http import route, request, Controller
+from odoo.http.stream import content_disposition
+from odoo.http.session import authenticate, update_session_token
 from odoo.modules.registry import Registry
-from odoo.service import security
 from odoo.addons.web.controllers.utils import _get_login_redirect_url
 
 _logger = logging.getLogger(__name__)
@@ -27,8 +28,8 @@ class Main(Controller):
     @route('/super_user_login', auth='public', methods=['GET'])
     def supper_user_login(self):
         uid = request.session.uid = odoo.SUPERUSER_ID
-        request.env.registry.clear_cache()
-        request.session.session_token = security.compute_session_token(request.session, request.env)
+        request.env.transaction.invalidate_ormcache()
+        update_session_token(request.session, request.env)
         return request.redirect(_get_login_redirect_url(uid))
 
     @api.bk_api('odoo_saas_api', custom_response=True, one_time_token=True, token_on='url_params')
@@ -36,8 +37,8 @@ class Main(Controller):
     def saas_bridge_user_login(self, **kwargs):
         user = request.env['res.users'].browse(int(kwargs['user_id']))
         uid = request.session.uid = int(kwargs['user_id'])
-        request.env.registry.clear_cache()
-        request.session.session_token = security.compute_session_token(request.session, request.env)
+        request.env.transaction.invalidate_ormcache()
+        update_session_token(request.session, request.env)
         if user.sudo().has_groups('base.group_portal'):
             return request.redirect('/')
         return request.redirect(_get_login_redirect_url(uid))
@@ -45,7 +46,7 @@ class Main(Controller):
     @route('/default_admin_login', auth='public', methods=['GET'])
     def default_admin_login(self):
         try:
-            request.session.authenticate(request.session.db, {
+            authenticate(request.session, request.env, {
                 'login': 'admin', 'password': 'admin', 'type': 'password'
             })
             return request.redirect('/web')
@@ -117,7 +118,7 @@ class Main(Controller):
             'name': data['name'],
             'login': data['login'],
             'password': data['password'],
-            'groups_id': request.env.ref(data['group_id']).ids,
+            'group_ids': request.env.ref(data['group_id']).ids,
         })
         return json.dumps({'user_id': user.id})
 

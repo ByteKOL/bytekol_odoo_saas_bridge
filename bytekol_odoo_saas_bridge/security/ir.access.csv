@@ -1,0 +1,6 @@
+id,name,model_id,group_id/id,operation,domain
+access_odoo_saas_client_data,odoo.saas.client.data,odoo.saas.client.data,base.group_user,r,
+access_bk_token_user,bk.token.user,bk.token,base.group_user,crud,"[('user_id', '=', user.id)]"
+access_bk_token_admin,bk.token.admin,bk.token,base.group_system,crud,
+access_bk_traceback_log,bk.traceback.log,bk.traceback.log,base.group_system,crud,
+access_simple_queue_job_admin,access_simple_queue_job_admin,simple.queue.job,base.group_system,crud,

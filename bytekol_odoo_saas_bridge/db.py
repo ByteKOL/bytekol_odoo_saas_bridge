@@ -2,12 +2,14 @@ import json
 import logging
 import os
 import shutil
+import subprocess
 import tempfile
 
 import odoo
 import odoo.release
 import odoo.sql_db
 import odoo.tools
+from odoo.tools.misc import exec_pg_environ, find_pg_tool
 
 _logger = logging.getLogger(__name__)
 
@@ -18,7 +20,8 @@ def dump_db(db_name, stream, backup_format='zip'):
 
     _logger.info('DUMP DB: %s format %s', db_name, backup_format)
 
-    cmd = ['pg_dump', '--no-owner', db_name]
+    cmd = [find_pg_tool('pg_dump'), '--no-owner', db_name]
+    env = exec_pg_environ()
 
     if backup_format == 'zip':
         with tempfile.TemporaryDirectory() as dump_dir:
@@ -30,7 +33,7 @@ def dump_db(db_name, stream, backup_format='zip'):
                 with db.cursor() as cr:
                     json.dump(dump_db_manifest(cr), fh, indent=4)
             cmd.insert(-1, '--file=' + os.path.join(dump_dir, 'dump.sql'))
-            odoo.tools.exec_pg_command(*cmd)
+            subprocess.run(cmd, env=env, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT, check=True)
             if stream:
                 odoo.tools.osutil.zip_dir(dump_dir, stream, include_dir=False, fnct_sort=lambda file_name: file_name != 'dump.sql')
             else:
@@ -40,7 +43,8 @@ def dump_db(db_name, stream, backup_format='zip'):
                 return t
     else:
         cmd.insert(-1, '--format=c')
-        stdin, stdout = odoo.tools.exec_pg_command_pipe(*cmd)
+        proc = subprocess.Popen(cmd, env=env, stdin=subprocess.DEVNULL, stdout=subprocess.PIPE)
+        stdout = proc.stdout
         if stream:
             shutil.copyfileobj(stdout, stream)
         else:
